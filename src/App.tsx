@@ -1,4 +1,5 @@
 import {Prettifier} from './services/Prettifier'
+import {Compressor} from './services/Compressor'
 import './App.css'
 
 function prettify()
@@ -11,15 +12,26 @@ function prettify()
     textarea.value = result;
 }
 
-function App() {
+function compress()
+{
+  const textarea = document.getElementsByName("prettyCode")[0] as HTMLTextAreaElement;
+  if (!textarea) 
+    return;
+  const compactCodeElement = document.getElementsByName("originalCode")[0] as HTMLInputElement;
+  if (!compactCodeElement)
+    return;
+  compactCodeElement.value = Compressor.compress(textarea.value);
+}
 
+function App()
+{
   return (
     <div id="App">
       <h1>Original Drapo Code</h1>
       <input type="text" name="originalCode" className='originalCode'/>
       <div className="buttonsRow">
         <button onClick={() => prettify()}>Prettify ⬇</button>
-        <button>Compress ⬆</button>
+        <button onClick={() => compress()}>Compress ⬆</button>
       </div>
       <h1>Prettified</h1>
       <textarea name="prettyCode" className="prettyCode" rows={40} wrap="off"/>

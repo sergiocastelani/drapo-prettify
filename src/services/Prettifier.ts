@@ -1,3 +1,5 @@
+import { Compressor } from "./Compressor";
+
 export class Prettifier 
 {
     private readonly NUMERIC = new Set("0123456789");
@@ -15,7 +17,7 @@ export class Prettifier
 
     public parse(input : string) : string 
     {
-        this.input = input;
+        this.input = Compressor.compress(input);
         this.parserPosition = 0;
         this.stepStack = [PrettifierStep.Spaces, PrettifierStep.Block, PrettifierStep.Spaces];
         this.output = "";
