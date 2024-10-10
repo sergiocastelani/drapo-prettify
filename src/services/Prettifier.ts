@@ -10,7 +10,7 @@ class Prettifier
     private stepStack : PrettifierStep[] = [PrettifierStep.FunctionName, PrettifierStep.Spaces];
 
     private output : string = "";
-    private outputStartMarker : number = 0;
+    private inputLineStartMarker : number = 0;
     private outputIdentation : number = 0;
 
     public parse(input : string) : string 
@@ -19,7 +19,7 @@ class Prettifier
         this.parserPosition = 0;
         this.stepStack = [PrettifierStep.FunctionName, PrettifierStep.Spaces];
         this.output = "";
-        this.outputStartMarker = 0;
+        this.inputLineStartMarker = 0;
         this.outputIdentation = 0;
 
         while (this.parserPosition < this.input.length)
@@ -51,21 +51,32 @@ class Prettifier
                     this.jumpChar(")");
                     this.stepStack.pop();
                     break;
+                case PrettifierStep.Parameter:
+                    this.parameterStep();
+                    break;
+                case PrettifierStep.Expression:
+                    this.expressionStep();
+                    break;
                 // case PrettifierStep.:
                 //     break;
                 default:
                     break;
             }
         }
-
+        this.dumpOutputLineStep();
         return this.output;
+    }
+
+    private parserError(message: string)
+    {
+        throw "Parser error: " + message + ". Parsed data: " + this.input.slice(0, this.parserPosition+1);
     }
 
     private dumpOutputLineStep()
     {
         this.stepStack.pop();
-        this.output +=  "  ".repeat(this.outputIdentation) + this.input.slice(this.outputStartMarker, this.parserPosition) + "\n";
-        this.outputStartMarker = this.parserPosition;
+        this.output +=  "  ".repeat(this.outputIdentation) + this.input.slice(this.inputLineStartMarker, this.parserPosition) + "\n";
+        this.inputLineStartMarker = this.parserPosition;
     }
 
     private spaceStep() 
@@ -90,8 +101,61 @@ class Prettifier
     private jumpChar(char: string)
     {
         if (this.input[this.parserPosition] != char)
-            throw `Parser error: expecting char '${char}'`;
+            this.parserError(`expecting char '${char}'`);
         this.parserPosition++;
+    }
+
+    private parameterStep()
+    {
+        const nextChar = this.input[this.parserPosition]
+        if (nextChar == "(" || nextChar == "{" || nextChar == "!")
+            this.stepStack.push(PrettifierStep.Spaces, PrettifierStep.Expression);
+        else if (nextChar == ",")
+        {
+            this.jumpChar(",");
+            this.stepStack.push(PrettifierStep.Spaces);
+        }
+        else if (this.VARIABLE.has(nextChar))
+            this.stepStack.push(PrettifierStep.Spaces, PrettifierStep.FunctionName)
+        else if (nextChar == ")")
+            this.stepStack.pop();
+        else
+            this.parserError("Unexpected char");
+    }
+
+    private expressionStep()
+    {
+        const nextChar = this.input[this.parserPosition];
+        let nextChar2 = nextChar + this.input[this.parserPosition+1];
+        if (nextChar == "(")
+            this.stepStack.push(PrettifierStep.Spaces, PrettifierStep.CloseParentheses, PrettifierStep.Spaces, PrettifierStep.Expression, PrettifierStep.Spaces, PrettifierStep.OpenParentheses);
+        else if (nextChar2 == "!=" || nextChar == "&&" || nextChar == "||")
+        {
+            this.parserPosition += 2;
+            this.stepStack.push(PrettifierStep.Spaces);
+        }
+        else if (nextChar == "!")
+        {
+            this.parserPosition++;
+            this.stepStack.push(PrettifierStep.Spaces);
+        }
+        else if (nextChar == "=")
+        {
+            this.parserPosition++;
+            this.stepStack.push(PrettifierStep.Spaces);
+        }
+        else if (nextChar == "{")
+        {
+            while ((nextChar2 != "}}") && (this.parserPosition < this.input.length))
+            {
+                this.parserPosition++;
+                nextChar2 = this.input.slice(this.parserPosition, this.parserPosition+2);
+            }
+            this.parserPosition += 2;
+            this.stepStack.push(PrettifierStep.Spaces);
+        }
+        else
+            this.stepStack.pop();
     }
 }
 
@@ -103,8 +167,8 @@ enum PrettifierStep
     Spaces,
     FunctionName,
     OpenParentheses,
-    Parameter,
     CloseParentheses,
+    Parameter,
     Mustache,
     Expression,
 }
