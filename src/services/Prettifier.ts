@@ -2,10 +2,7 @@ import { Compressor } from "./Compressor";
 
 export class Prettifier 
 {
-    private readonly NUMERIC = new Set("0123456789");
-    private readonly ALPHA = new Set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
     private readonly VARIABLE = new Set("-_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
-    private readonly ALPHANUMERIC = new Set("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
 
     private input : string = "";
     private parserPosition: number = 0;
