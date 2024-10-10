@@ -22,7 +22,7 @@ function App() {
         <button>Compress ⬆</button>
       </div>
       <h1>Prettified</h1>
-      <textarea name="prettyCode" className="prettyCode" rows={40}/>
+      <textarea name="prettyCode" className="prettyCode" rows={40} wrap="off"/>
     </div>
   )
 }
