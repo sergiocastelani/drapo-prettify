@@ -1,4 +1,4 @@
-class Prettifier 
+export class Prettifier 
 {
     private readonly NUMERIC = new Set("0123456789");
     private readonly ALPHA = new Set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
@@ -7,7 +7,7 @@ class Prettifier
 
     private input : string = "";
     private parserPosition: number = 0;
-    private stepStack : PrettifierStep[] = [PrettifierStep.FunctionName, PrettifierStep.Spaces];
+    private stepStack : PrettifierStep[] = [PrettifierStep.Spaces, PrettifierStep.Block, PrettifierStep.Spaces];
 
     private output : string = "";
     private inputLineStartMarker : number = 0;
@@ -17,7 +17,7 @@ class Prettifier
     {
         this.input = input;
         this.parserPosition = 0;
-        this.stepStack = [PrettifierStep.FunctionName, PrettifierStep.Spaces];
+        this.stepStack = [PrettifierStep.Spaces, PrettifierStep.Block, PrettifierStep.Spaces];
         this.output = "";
         this.inputLineStartMarker = 0;
         this.outputIdentation = 0;
@@ -40,6 +40,9 @@ class Prettifier
                 case PrettifierStep.Spaces:
                     this.spaceStep();
                     break;
+                case PrettifierStep.Block:
+                    this.blockStep();
+                    break;
                 case PrettifierStep.FunctionName:
                     this.functionNameStep();
                     break;
@@ -57,8 +60,10 @@ class Prettifier
                 case PrettifierStep.Expression:
                     this.expressionStep();
                     break;
-                // case PrettifierStep.:
-                //     break;
+                case PrettifierStep.Comma:
+                    this.jumpChar(",");
+                    this.stepStack.pop();
+                    break;
                 default:
                     break;
             }
@@ -75,7 +80,7 @@ class Prettifier
     private dumpOutputLineStep()
     {
         this.stepStack.pop();
-        this.output +=  "  ".repeat(this.outputIdentation) + this.input.slice(this.inputLineStartMarker, this.parserPosition) + "\n";
+        this.output +=  "  ".repeat(this.outputIdentation) + this.input.slice(this.inputLineStartMarker, this.parserPosition).trim() + "\n";
         this.inputLineStartMarker = this.parserPosition;
     }
 
@@ -87,14 +92,71 @@ class Prettifier
             this.stepStack.pop();
     }
 
+    private blockStep()
+    {
+        const nextChar = this.input[this.parserPosition];
+        if (nextChar == ";")
+        {
+            this.parserPosition++;
+            this.stepStack.push(PrettifierStep.DumpOutputLine, PrettifierStep.Spaces);
+        }
+        else if (this.VARIABLE.has(nextChar))
+            this.stepStack.push(PrettifierStep.Spaces, PrettifierStep.FunctionName);
+        else
+            this.stepStack.pop();
+    }
+
+    private lastFunctionName : string = "";
     private functionNameStep() 
     {
-        if (this.VARIABLE.has(this.input[this.parserPosition]))
+        const nextChar = this.input[this.parserPosition];
+        if (this.VARIABLE.has(nextChar))
+        {
+            this.lastFunctionName += nextChar;
             this.parserPosition++;
+        }
         else
         {
             this.stepStack.pop();
-            this.stepStack.push(PrettifierStep.CloseParentheses, PrettifierStep.Spaces, PrettifierStep.Parameter, PrettifierStep.Spaces, PrettifierStep.OpenParentheses, PrettifierStep.Spaces);
+            if (this.lastFunctionName.toLowerCase() == "if")
+            {
+                this.stepStack.push(
+                    PrettifierStep.CloseParentheses,
+                    PrettifierStep.DecOutputIdentation,
+                    PrettifierStep.DumpOutputLine,
+                    PrettifierStep.Spaces,
+                    PrettifierStep.Block,
+                    PrettifierStep.DumpOutputLine,
+                    PrettifierStep.Spaces,
+                    PrettifierStep.Comma,
+                    PrettifierStep.DumpOutputLine,
+                    PrettifierStep.Spaces,
+                    PrettifierStep.Block,
+                    PrettifierStep.DumpOutputLine,
+                    PrettifierStep.Spaces,
+                    PrettifierStep.Comma,
+                    PrettifierStep.DumpOutputLine,
+                    PrettifierStep.Spaces,
+                    PrettifierStep.Expression,
+                    PrettifierStep.IncOutputIdentation,
+                    PrettifierStep.DumpOutputLine,
+                    PrettifierStep.Spaces,
+                    PrettifierStep.OpenParentheses, 
+                    PrettifierStep.Spaces
+                );    
+            }
+            else if (this.lastFunctionName.length > 0)
+            {
+                this.stepStack.push(
+                    PrettifierStep.Spaces, 
+                    PrettifierStep.CloseParentheses, 
+                    PrettifierStep.Spaces, 
+                    PrettifierStep.Parameter, 
+                    PrettifierStep.Spaces,
+                    PrettifierStep.OpenParentheses, 
+                    PrettifierStep.Spaces
+                );
+            }
         }
     }
 
@@ -107,12 +169,12 @@ class Prettifier
 
     private parameterStep()
     {
-        const nextChar = this.input[this.parserPosition]
+        const nextChar = this.input[this.parserPosition];
         if (nextChar == "(" || nextChar == "{" || nextChar == "!")
             this.stepStack.push(PrettifierStep.Spaces, PrettifierStep.Expression);
         else if (nextChar == ",")
         {
-            this.jumpChar(",");
+            this.parserPosition++;
             this.stepStack.push(PrettifierStep.Spaces);
         }
         else if (this.VARIABLE.has(nextChar))
@@ -165,10 +227,11 @@ enum PrettifierStep
     IncOutputIdentation,
     DecOutputIdentation,
     Spaces,
+    Block,
     FunctionName,
     OpenParentheses,
     CloseParentheses,
     Parameter,
-    Mustache,
     Expression,
+    Comma,
 }

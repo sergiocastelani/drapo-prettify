@@ -1,4 +1,15 @@
+import {Prettifier} from './services/Prettifier'
 import './App.css'
+
+function prettify()
+{
+  const compactCode = (document.getElementsByName("originalCode")[0] as HTMLInputElement)?.value ?? "";
+  const prettifier = new Prettifier();
+  const result = prettifier.parse(compactCode);
+  const textarea = document.getElementsByName("prettyCode")[0] as HTMLTextAreaElement;
+  if (textarea) 
+    textarea.value = result;
+}
 
 function App() {
 
@@ -7,7 +18,7 @@ function App() {
       <h1>Original Drapo Code</h1>
       <input type="text" name="originalCode" className='originalCode'/>
       <div className="buttonsRow">
-        <button onClick={() => console.log((document.getElementsByName("originalCode")[0] as HTMLInputElement)?.value)}>Prettify ⬇</button>
+        <button onClick={() => prettify()}>Prettify ⬇</button>
         <button>Compress ⬆</button>
       </div>
       <h1>Prettified</h1>
