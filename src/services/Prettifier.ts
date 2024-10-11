@@ -14,7 +14,7 @@ enum PrettifierStep
     Parameter,
     Expression,
     Comma,
-    DFor,
+    GeneralTextParameter,
 }
 
 export class Prettifier 
@@ -94,8 +94,8 @@ export class Prettifier
                     this.jumpChar(",");
                     this.stepStack.pop();
                     break;
-                case PrettifierStep.DFor:
-                    this.dForStep();
+                case PrettifierStep.GeneralTextParameter:
+                    this.generalTextParameterStep();
                     break;
                 default:
                     break;
@@ -174,12 +174,12 @@ export class Prettifier
                 PrettifierStep.CloseParentheses,
                 PrettifierStep.DecOutputIdentation,
                 PrettifierStep.DumpOutputLine,
-                () => this.optionalParameter(true, [PrettifierStep.DFor]),
+                () => this.optionalParameter(true, [PrettifierStep.GeneralTextParameter]),
                 PrettifierStep.Spaces,
                 () => this.optionalParameter(true, [PrettifierStep.Expression]),
                 PrettifierStep.Spaces,
                 () => this.optionalParameter(true, [PrettifierStep.Expression]),
-                PrettifierStep.DFor,
+                PrettifierStep.GeneralTextParameter,
                 PrettifierStep.DumpOutputLine,
                 PrettifierStep.Spaces,
                 PrettifierStep.Comma,
@@ -188,6 +188,18 @@ export class Prettifier
                 PrettifierStep.Block,
                 PrettifierStep.IncOutputIdentation,
                 PrettifierStep.DumpOutputLine,
+                PrettifierStep.Spaces,
+                PrettifierStep.OpenParentheses, 
+            );
+        }
+        else if (this.lastVariableName.toLowerCase() == "acceptdatachanges")
+        {
+            this.stepStack.push(
+                PrettifierStep.CloseParentheses,
+                PrettifierStep.Spaces,
+                PrettifierStep.Parameter,
+                PrettifierStep.Spaces,
+                PrettifierStep.GeneralTextParameter,
                 PrettifierStep.Spaces,
                 PrettifierStep.OpenParentheses, 
             );
@@ -222,7 +234,7 @@ export class Prettifier
         }
     }
 
-    private dForStep()
+    private generalTextParameterStep()
     {
         this.stepStack.pop();
         let nextChar = this.input[this.parserPosition];
