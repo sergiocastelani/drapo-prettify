@@ -17,16 +17,16 @@ h1 {
 }
 
 input {
-  color: antiquewhite;
-  background-color: #373737;
+  color: #c9d1d9;
+  background-color: #161b22;
   border-radius: 5px;
   border-width: 1px;
   font-family: 'Courier New', Courier, monospace;
 }
 
 textarea {
-  color: antiquewhite;
-  background-color: #373737;
+  color: #c9d1d9;
+  background-color: #161b22;
   border-radius: 5px;
   border-width: 1px;
   font-family: 'Courier New', Courier, monospace;
