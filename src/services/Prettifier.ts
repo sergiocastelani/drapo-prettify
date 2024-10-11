@@ -305,20 +305,17 @@ export class Prettifier
             this.stepStack.push(PrettifierStep.Spaces, PrettifierStep.CloseParentheses, PrettifierStep.Spaces, PrettifierStep.Expression, PrettifierStep.Spaces, PrettifierStep.OpenParentheses);
         else if (nextChar2 == "&&" || nextChar2 == "||")
         {
-            this.input = this.input.slice(0, this.parserPosition) + ` ${nextChar2} ` + this.input.slice(this.parserPosition + 2);
-            this.parserPosition += 4;
+            this.wrapSimbolInSpaces(2);
             this.stepStack.push(PrettifierStep.Spaces);
         }
         else if (nextChar2 == "!=" || nextChar2 == "<=" || nextChar2 == ">=")
         {
-            this.input = this.input.slice(0, this.parserPosition) + ` ${nextChar2} ` + this.input.slice(this.parserPosition + 2);
-            this.parserPosition += 4;
+            this.wrapSimbolInSpaces(2);
             this.stepStack.push(PrettifierStep.Mustache, PrettifierStep.VariableName, PrettifierStep.Spaces);
         }
         else if (nextChar == "=" || nextChar == ">" || nextChar == "<")
         {
-            this.input = this.input.slice(0, this.parserPosition) + ` ${nextChar} ` + this.input.slice(this.parserPosition + 1);
-            this.parserPosition += 3;
+            this.wrapSimbolInSpaces(1);
             this.stepStack.push(PrettifierStep.Mustache, PrettifierStep.VariableName, PrettifierStep.Spaces);
         }
         else if (nextChar == "!")
@@ -334,6 +331,17 @@ export class Prettifier
             this.stepStack.push(PrettifierStep.Spaces, PrettifierStep.VariableName)
         else
             this.stepStack.pop();
+    }
+
+    private wrapSimbolInSpaces(simbolLength: number)
+    {
+        let replaceSimbol = this.input.slice(this.parserPosition, this.parserPosition + simbolLength);
+        if (this.input[this.parserPosition-1] != " ")
+            replaceSimbol = " " + replaceSimbol;
+        if (this.input[this.parserPosition + simbolLength] != " ")
+            replaceSimbol += " ";
+        this.input = this.input.slice(0, this.parserPosition) + replaceSimbol + this.input.slice(this.parserPosition + simbolLength);
+        this.parserPosition += replaceSimbol.length;
     }
 
 }
