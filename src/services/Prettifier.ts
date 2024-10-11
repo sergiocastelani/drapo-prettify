@@ -108,6 +108,8 @@ export class Prettifier
             this.parserPosition++;
             this.stepStack.push(PrettifierStep.DumpOutputLine, PrettifierStep.Spaces);
         }
+        else if (nextChar == "{")
+            this.stepStack.push(PrettifierStep.Spaces, PrettifierStep.Mustache);
         else if (this.VARIABLE.has(nextChar))
             this.stepStack.push(PrettifierStep.Spaces, PrettifierStep.FunctionName);
         else
@@ -237,21 +239,22 @@ export class Prettifier
             this.parserPosition += 4;
             this.stepStack.push(PrettifierStep.Spaces);
         }
-        else if (nextChar2 == "!=")
+        else if (nextChar2 == "!=" || nextChar2 == "<=" || nextChar2 == ">=")
         {
             this.input = this.input.slice(0, this.parserPosition) + ` ${nextChar2} ` + this.input.slice(this.parserPosition + 2);
             this.parserPosition += 4;
+            this.stepStack.push(PrettifierStep.Mustache, PrettifierStep.VariableName, PrettifierStep.Spaces);
+        }
+        else if (nextChar == "=" || nextChar == ">" || nextChar == "<")
+        {
+            this.input = this.input.slice(0, this.parserPosition) + ` ${nextChar} ` + this.input.slice(this.parserPosition + 2);
+            this.parserPosition += 3;
             this.stepStack.push(PrettifierStep.Mustache, PrettifierStep.VariableName, PrettifierStep.Spaces);
         }
         else if (nextChar == "!")
         {
             this.parserPosition++;
             this.stepStack.push(PrettifierStep.Mustache, PrettifierStep.Spaces);
-        }
-        else if (nextChar == "=")
-        {
-            this.parserPosition++;
-            this.stepStack.push(PrettifierStep.Mustache, PrettifierStep.VariableName, PrettifierStep.Spaces);
         }
         else if (nextChar == "{")
         {
