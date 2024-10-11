@@ -40,7 +40,7 @@ export class Prettifier
         this.inputLineStartMarker = 0;
         this.outputIdentation = 0;
 
-        while (this.parserPosition < this.input.length)
+        while (this.parserPosition < this.input.length && this.stepStack.length > 0)
         {
             const nextStep = this.stepStack[this.stepStack.length-1];
             if ((typeof nextStep) === 'function')
@@ -107,7 +107,9 @@ export class Prettifier
 
     private parserError(message: string)
     {
-        throw "Parser error: " + message + ". Parsed data: " + this.input.slice(0, this.parserPosition+1);
+        throw "Parser error: " + message + "\n" +
+            "Current char: " + this.input[this.parserPosition] + "\n" +
+            "Parsed data: " + this.input.slice(0, this.parserPosition+1);
     }
 
     private dumpOutputLineStep()
@@ -138,8 +140,10 @@ export class Prettifier
             this.stepStack.push(PrettifierStep.Spaces, PrettifierStep.Mustache);
         else if (this.VARIABLE.has(nextChar))
             this.stepStack.push(PrettifierStep.Spaces, PrettifierStep.VariableName);
-        else
+        else if (nextChar == ")" || nextChar == ",")
             this.stepStack.pop();
+        else
+            this.parserError("parsing code block");
     }
 
     private functionCallStep() 
@@ -276,7 +280,7 @@ export class Prettifier
         else if (nextChar == ")")
             this.stepStack.pop();
         else
-            this.parserError("Unexpected char");
+            this.parserError("parsing parameter");
     }
 
     private expressionStep()
