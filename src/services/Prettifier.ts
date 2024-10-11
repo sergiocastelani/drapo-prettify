@@ -1,8 +1,6 @@
-import { Compressor } from "./Compressor";
-
 export class Prettifier 
 {
-    private readonly VARIABLE = new Set("-_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    private readonly VARIABLE = new Set("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.");
 
     private input : string = "";
     private parserPosition: number = 0;
@@ -12,9 +10,11 @@ export class Prettifier
     private inputLineStartMarker : number = 0;
     private outputIdentation : number = 0;
 
+    private lastVariableName : string = "";
+
     public parse(input : string) : string 
     {
-        this.input = Compressor.compress(input);
+        this.input = input;
         this.parserPosition = 0;
         this.stepStack = [PrettifierStep.Spaces, PrettifierStep.Block, PrettifierStep.Spaces];
         this.output = "";
@@ -42,8 +42,8 @@ export class Prettifier
                 case PrettifierStep.Block:
                     this.blockStep();
                     break;
-                case PrettifierStep.FunctionName:
-                    this.functionNameStep();
+                case PrettifierStep.FunctionCall:
+                    this.functionCallStep();
                     break;
                 case PrettifierStep.VariableName:
                     this.variableNameStep();
@@ -65,12 +65,21 @@ export class Prettifier
                 case PrettifierStep.Expression:
                     this.expressionStep();
                     break;
-                case PrettifierStep.IfComma:
-                    this.ifCommaStep();
+                case PrettifierStep.CommaOptionalBlock:
+                    this.commaOptionalBlockStep();
                     break;
                 case PrettifierStep.Comma:
                     this.jumpChar(",");
                     this.stepStack.pop();
+                    break;
+                case PrettifierStep.DFor:
+                    this.dForStep();
+                    break;
+                case PrettifierStep.CommaOptionalExpression:
+                    this.commaOptionalExpressionStep();
+                    break;
+                case PrettifierStep.CommaOptionalDFor:
+                    this.commaOptionalDForStep();
                     break;
                 default:
                     break;
@@ -88,13 +97,14 @@ export class Prettifier
     private dumpOutputLineStep()
     {
         this.stepStack.pop();
-        this.output +=  "  ".repeat(this.outputIdentation) + this.input.slice(this.inputLineStartMarker, this.parserPosition).trim() + "\n";
+        this.output +=  "\t".repeat(this.outputIdentation) + this.input.slice(this.inputLineStartMarker, this.parserPosition).trim() + "\n";
         this.inputLineStartMarker = this.parserPosition;
     }
 
     private spaceStep() 
     {
-        if (this.input[this.parserPosition] == " ")
+        const nextChar = this.input[this.parserPosition];
+        if (nextChar == " " || nextChar == "\n" || nextChar == "\t")
             this.parserPosition++;
         else
             this.stepStack.pop();
@@ -108,58 +118,74 @@ export class Prettifier
             this.parserPosition++;
             this.stepStack.push(PrettifierStep.DumpOutputLine, PrettifierStep.Spaces);
         }
+        else if (nextChar == "{")
+            this.stepStack.push(PrettifierStep.Spaces, PrettifierStep.Mustache);
         else if (this.VARIABLE.has(nextChar))
-            this.stepStack.push(PrettifierStep.Spaces, PrettifierStep.FunctionName);
+            this.stepStack.push(PrettifierStep.Spaces, PrettifierStep.VariableName);
         else
             this.stepStack.pop();
     }
 
-    private lastFunctionName : string = "";
-    private functionNameStep() 
+    private functionCallStep() 
     {
+        this.stepStack.pop();
         const nextChar = this.input[this.parserPosition];
-        if (this.VARIABLE.has(nextChar))
+        if (nextChar != "(")
+            return;
+        if (this.lastVariableName.toLowerCase() == "if")
         {
-            this.lastFunctionName += nextChar;
-            this.parserPosition++;
+            this.stepStack.push(
+                PrettifierStep.CloseParentheses,
+                PrettifierStep.DecOutputIdentation,
+                PrettifierStep.DumpOutputLine,
+                PrettifierStep.CommaOptionalBlock,
+                PrettifierStep.CommaOptionalBlock,
+                PrettifierStep.Spaces,
+                PrettifierStep.Expression,
+                PrettifierStep.IncOutputIdentation,
+                PrettifierStep.DumpOutputLine,
+                PrettifierStep.Spaces,
+                PrettifierStep.OpenParentheses, 
+            );
         }
-        else
+        else if (this.lastVariableName.toLowerCase() == "executedataitem")
         {
-            this.stepStack.pop();
-            if (this.lastFunctionName.toLowerCase() == "if")
-            {
-                this.stepStack.push(
-                    PrettifierStep.CloseParentheses,
-                    PrettifierStep.DecOutputIdentation,
-                    PrettifierStep.DumpOutputLine,
-                    PrettifierStep.IfComma,
-                    PrettifierStep.IfComma,
-                    PrettifierStep.Spaces,
-                    PrettifierStep.Expression,
-                    PrettifierStep.IncOutputIdentation,
-                    PrettifierStep.DumpOutputLine,
-                    PrettifierStep.Spaces,
-                    PrettifierStep.OpenParentheses, 
-                    PrettifierStep.Spaces
-                );    
-            }
-            else if (this.lastFunctionName.length > 0)
-            {
-                this.stepStack.push(
-                    PrettifierStep.Spaces, 
-                    PrettifierStep.CloseParentheses, 
-                    PrettifierStep.Spaces, 
-                    PrettifierStep.Parameter, 
-                    PrettifierStep.Spaces,
-                    PrettifierStep.OpenParentheses, 
-                    PrettifierStep.Spaces
-                );
-            }
-            this.lastFunctionName = "";
+            this.stepStack.push(
+                PrettifierStep.CloseParentheses,
+                PrettifierStep.DecOutputIdentation,
+                PrettifierStep.DumpOutputLine,
+                PrettifierStep.CommaOptionalDFor,
+                PrettifierStep.Spaces,
+                PrettifierStep.CommaOptionalExpression,
+                PrettifierStep.Spaces,
+                PrettifierStep.CommaOptionalExpression,
+                PrettifierStep.DFor,
+                PrettifierStep.DumpOutputLine,
+                PrettifierStep.Spaces,
+                PrettifierStep.Comma,
+                PrettifierStep.DumpOutputLine,
+                PrettifierStep.Spaces,
+                PrettifierStep.Block,
+                PrettifierStep.IncOutputIdentation,
+                PrettifierStep.DumpOutputLine,
+                PrettifierStep.Spaces,
+                PrettifierStep.OpenParentheses, 
+            );
+        }
+        else if (this.lastVariableName.length > 0)
+        {
+            this.stepStack.push(
+                PrettifierStep.Spaces, 
+                PrettifierStep.CloseParentheses, 
+                PrettifierStep.Spaces, 
+                PrettifierStep.Parameter, 
+                PrettifierStep.Spaces,
+                PrettifierStep.OpenParentheses, 
+            );
         }
     }
 
-    private ifCommaStep()
+    private commaOptionalBlockStep()
     {
         this.stepStack.pop();
         const nextChar = this.input[this.parserPosition];
@@ -176,13 +202,59 @@ export class Prettifier
         }
     }
 
+    private commaOptionalExpressionStep()
+    {
+        this.stepStack.pop();
+        const nextChar = this.input[this.parserPosition];
+        if (nextChar == ",")
+        {
+            this.stepStack.push(
+                PrettifierStep.Spaces,
+                PrettifierStep.Expression,
+                PrettifierStep.DumpOutputLine,
+                PrettifierStep.Spaces,
+                PrettifierStep.Comma,
+                PrettifierStep.DumpOutputLine,
+            );
+        }
+    }
+
+    private commaOptionalDForStep()
+    {
+        this.stepStack.pop();
+        const nextChar = this.input[this.parserPosition];
+        if (nextChar == ",")
+        {
+            this.stepStack.push(
+                PrettifierStep.Spaces,
+                PrettifierStep.DFor,
+                PrettifierStep.DumpOutputLine,
+                PrettifierStep.Spaces,
+                PrettifierStep.Comma,
+                PrettifierStep.DumpOutputLine,
+            );
+        }
+    }
+
+    private dForStep()
+    {
+        this.stepStack.pop();
+        let nextChar = this.input[this.parserPosition];
+        while(this.parserPosition < this.input.length && nextChar != "," && nextChar != ")")
+            nextChar = this.input[++this.parserPosition];
+    }
+
     private variableNameStep() 
     {
-        const nextChar = this.input[this.parserPosition];
-        if (this.VARIABLE.has(nextChar))
-            this.parserPosition++;
-        else
-            this.stepStack.pop();
+        this.stepStack.pop();
+        this.lastVariableName = "";
+        let nextChar = this.input[this.parserPosition];
+        while (this.parserPosition < this.input.length && this.VARIABLE.has(nextChar))
+        {
+            this.lastVariableName += nextChar;
+            nextChar = this.input[++this.parserPosition];
+        }
+        this.stepStack.push(PrettifierStep.FunctionCall, PrettifierStep.Spaces);
     }
 
     private mustacheStep() 
@@ -233,14 +305,17 @@ export class Prettifier
             this.stepStack.push(PrettifierStep.Spaces, PrettifierStep.CloseParentheses, PrettifierStep.Spaces, PrettifierStep.Expression, PrettifierStep.Spaces, PrettifierStep.OpenParentheses);
         else if (nextChar2 == "&&" || nextChar2 == "||")
         {
-            this.input = this.input.slice(0, this.parserPosition) + ` ${nextChar2} ` + this.input.slice(this.parserPosition + 2);
-            this.parserPosition += 4;
+            this.wrapSimbolInSpaces(2);
             this.stepStack.push(PrettifierStep.Spaces);
         }
-        else if (nextChar2 == "!=")
+        else if (nextChar2 == "!=" || nextChar2 == "<=" || nextChar2 == ">=")
         {
-            this.input = this.input.slice(0, this.parserPosition) + ` ${nextChar2} ` + this.input.slice(this.parserPosition + 2);
-            this.parserPosition += 4;
+            this.wrapSimbolInSpaces(2);
+            this.stepStack.push(PrettifierStep.Mustache, PrettifierStep.VariableName, PrettifierStep.Spaces);
+        }
+        else if (nextChar == "=" || nextChar == ">" || nextChar == "<")
+        {
+            this.wrapSimbolInSpaces(1);
             this.stepStack.push(PrettifierStep.Mustache, PrettifierStep.VariableName, PrettifierStep.Spaces);
         }
         else if (nextChar == "!")
@@ -248,19 +323,25 @@ export class Prettifier
             this.parserPosition++;
             this.stepStack.push(PrettifierStep.Mustache, PrettifierStep.Spaces);
         }
-        else if (nextChar == "=")
-        {
-            this.parserPosition++;
-            this.stepStack.push(PrettifierStep.Mustache, PrettifierStep.VariableName, PrettifierStep.Spaces);
-        }
         else if (nextChar == "{")
         {
             this.stepStack.push(PrettifierStep.Spaces, PrettifierStep.Mustache);
         }
         else if (this.VARIABLE.has(nextChar))
-            this.stepStack.push(PrettifierStep.Spaces, PrettifierStep.FunctionName)
+            this.stepStack.push(PrettifierStep.Spaces, PrettifierStep.VariableName)
         else
             this.stepStack.pop();
+    }
+
+    private wrapSimbolInSpaces(simbolLength: number)
+    {
+        let replaceSimbol = this.input.slice(this.parserPosition, this.parserPosition + simbolLength);
+        if (this.input[this.parserPosition-1] != " ")
+            replaceSimbol = " " + replaceSimbol;
+        if (this.input[this.parserPosition + simbolLength] != " ")
+            replaceSimbol += " ";
+        this.input = this.input.slice(0, this.parserPosition) + replaceSimbol + this.input.slice(this.parserPosition + simbolLength);
+        this.parserPosition += replaceSimbol.length;
     }
 
 }
@@ -272,13 +353,16 @@ enum PrettifierStep
     DecOutputIdentation,
     Spaces,
     Block,
-    FunctionName,
+    FunctionCall,
     VariableName,
     Mustache,
     OpenParentheses,
     CloseParentheses,
     Parameter,
     Expression,
-    IfComma,
+    CommaOptionalBlock,
     Comma,
+    DFor,
+    CommaOptionalExpression,
+    CommaOptionalDFor,
 }
