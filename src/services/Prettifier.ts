@@ -1,10 +1,29 @@
+type StackContent = (PrettifierStep | (()=>void));
+enum PrettifierStep 
+{
+    DumpOutputLine,
+    IncOutputIdentation,
+    DecOutputIdentation,
+    Spaces,
+    Block,
+    FunctionCall,
+    VariableName,
+    Mustache,
+    OpenParentheses,
+    CloseParentheses,
+    Parameter,
+    Expression,
+    Comma,
+    DFor,
+}
+
 export class Prettifier 
 {
     private readonly VARIABLE = new Set("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.");
 
     private input : string = "";
     private parserPosition: number = 0;
-    private stepStack : PrettifierStep[] = [PrettifierStep.Spaces, PrettifierStep.Block, PrettifierStep.Spaces];
+    private stepStack : StackContent[] = [PrettifierStep.Spaces, PrettifierStep.Block, PrettifierStep.Spaces];
 
     private output : string = "";
     private inputLineStartMarker : number = 0;
@@ -23,7 +42,13 @@ export class Prettifier
 
         while (this.parserPosition < this.input.length)
         {
-            switch (this.stepStack[this.stepStack.length-1])
+            const nextStep = this.stepStack[this.stepStack.length-1];
+            if ((typeof nextStep) === 'function')
+            {
+                (nextStep as (()=>void))();
+                continue;
+            }
+            switch (nextStep)
             {
                 case PrettifierStep.DumpOutputLine:
                     this.dumpOutputLineStep();
@@ -65,21 +90,12 @@ export class Prettifier
                 case PrettifierStep.Expression:
                     this.expressionStep();
                     break;
-                case PrettifierStep.CommaOptionalBlock:
-                    this.commaOptionalBlockStep();
-                    break;
                 case PrettifierStep.Comma:
                     this.jumpChar(",");
                     this.stepStack.pop();
                     break;
                 case PrettifierStep.DFor:
                     this.dForStep();
-                    break;
-                case PrettifierStep.CommaOptionalExpression:
-                    this.commaOptionalExpressionStep();
-                    break;
-                case PrettifierStep.CommaOptionalDFor:
-                    this.commaOptionalDForStep();
                     break;
                 default:
                     break;
@@ -138,8 +154,8 @@ export class Prettifier
                 PrettifierStep.CloseParentheses,
                 PrettifierStep.DecOutputIdentation,
                 PrettifierStep.DumpOutputLine,
-                PrettifierStep.CommaOptionalBlock,
-                PrettifierStep.CommaOptionalBlock,
+                () => this.optionalParameter(true, [PrettifierStep.Block]),
+                () => this.optionalParameter(true, [PrettifierStep.Block]),
                 PrettifierStep.Spaces,
                 PrettifierStep.Expression,
                 PrettifierStep.IncOutputIdentation,
@@ -154,11 +170,11 @@ export class Prettifier
                 PrettifierStep.CloseParentheses,
                 PrettifierStep.DecOutputIdentation,
                 PrettifierStep.DumpOutputLine,
-                PrettifierStep.CommaOptionalDFor,
+                () => this.optionalParameter(true, [PrettifierStep.DFor]),
                 PrettifierStep.Spaces,
-                PrettifierStep.CommaOptionalExpression,
+                () => this.optionalParameter(true, [PrettifierStep.Expression]),
                 PrettifierStep.Spaces,
-                PrettifierStep.CommaOptionalExpression,
+                () => this.optionalParameter(true, [PrettifierStep.Expression]),
                 PrettifierStep.DFor,
                 PrettifierStep.DumpOutputLine,
                 PrettifierStep.Spaces,
@@ -185,7 +201,7 @@ export class Prettifier
         }
     }
 
-    private commaOptionalBlockStep()
+    private optionalParameter(startNewLine: boolean, steps: StackContent[])
     {
         this.stepStack.pop();
         const nextChar = this.input[this.parserPosition];
@@ -193,45 +209,11 @@ export class Prettifier
         {
             this.stepStack.push(
                 PrettifierStep.Spaces,
-                PrettifierStep.Block,
-                PrettifierStep.DumpOutputLine,
+                ...steps,
+                startNewLine ? PrettifierStep.DumpOutputLine : PrettifierStep.Spaces,
                 PrettifierStep.Spaces,
                 PrettifierStep.Comma,
-                PrettifierStep.DumpOutputLine,
-            );
-        }
-    }
-
-    private commaOptionalExpressionStep()
-    {
-        this.stepStack.pop();
-        const nextChar = this.input[this.parserPosition];
-        if (nextChar == ",")
-        {
-            this.stepStack.push(
-                PrettifierStep.Spaces,
-                PrettifierStep.Expression,
-                PrettifierStep.DumpOutputLine,
-                PrettifierStep.Spaces,
-                PrettifierStep.Comma,
-                PrettifierStep.DumpOutputLine,
-            );
-        }
-    }
-
-    private commaOptionalDForStep()
-    {
-        this.stepStack.pop();
-        const nextChar = this.input[this.parserPosition];
-        if (nextChar == ",")
-        {
-            this.stepStack.push(
-                PrettifierStep.Spaces,
-                PrettifierStep.DFor,
-                PrettifierStep.DumpOutputLine,
-                PrettifierStep.Spaces,
-                PrettifierStep.Comma,
-                PrettifierStep.DumpOutputLine,
+                startNewLine ? PrettifierStep.DumpOutputLine : PrettifierStep.Spaces,
             );
         }
     }
@@ -344,25 +326,4 @@ export class Prettifier
         this.parserPosition += replaceSimbol.length;
     }
 
-}
-
-enum PrettifierStep 
-{
-    DumpOutputLine,
-    IncOutputIdentation,
-    DecOutputIdentation,
-    Spaces,
-    Block,
-    FunctionCall,
-    VariableName,
-    Mustache,
-    OpenParentheses,
-    CloseParentheses,
-    Parameter,
-    Expression,
-    CommaOptionalBlock,
-    Comma,
-    DFor,
-    CommaOptionalExpression,
-    CommaOptionalDFor,
 }
