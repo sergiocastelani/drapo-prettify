@@ -227,6 +227,24 @@ export class Prettifier
                 PrettifierStep.OpenParentheses, 
             );
         }
+        else if (this.lastVariableName.toLowerCase() == "showwindow")
+        {
+            this.stepStack.push(
+                PrettifierStep.CloseParentheses,
+                PrettifierStep.Spaces,
+                () => this.optionalParameter(false, [PrettifierStep.GeneralTextParameter]),
+                PrettifierStep.Spaces,
+                () => this.optionalParameter(false, [PrettifierStep.GeneralTextParameter]),
+                PrettifierStep.Spaces,
+                () => this.optionalParameter(false, [PrettifierStep.GeneralTextParameter]),
+                PrettifierStep.Spaces,
+                () => this.optionalParameter(false, [PrettifierStep.GeneralTextParameter]),
+                PrettifierStep.Spaces,
+                PrettifierStep.GeneralTextParameter,
+                PrettifierStep.Spaces,
+                PrettifierStep.OpenParentheses, 
+            );
+        }
         else if (this.lastVariableName.length > 0)
         {
             this.stepStack.push(
