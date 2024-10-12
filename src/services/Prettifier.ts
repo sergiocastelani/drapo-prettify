@@ -121,11 +121,10 @@ export class Prettifier
 
     private spaceStep() 
     {
-        const nextChar = this.input[this.parserPosition];
-        if (nextChar == " " || nextChar == "\n" || nextChar == "\t")
-            this.parserPosition++;
-        else
-            this.stepStack.pop();
+        this.stepStack.pop();
+        let nextChar = this.input[this.parserPosition];
+        while (nextChar == " " || nextChar == "\n" || nextChar == "\t")
+            nextChar = this.input[++this.parserPosition];
     }
 
     private blockStep()
@@ -198,6 +197,30 @@ export class Prettifier
                 PrettifierStep.CloseParentheses,
                 PrettifierStep.Spaces,
                 PrettifierStep.Parameter,
+                PrettifierStep.Spaces,
+                PrettifierStep.Comma,
+                PrettifierStep.Spaces,
+                PrettifierStep.GeneralTextParameter,
+                PrettifierStep.Spaces,
+                PrettifierStep.OpenParentheses, 
+            );
+        }
+        else if (this.lastVariableName.toLowerCase() == "updatesector")
+        {
+            this.stepStack.push(
+                PrettifierStep.CloseParentheses,
+                PrettifierStep.Spaces,
+                () => this.optionalParameter(false, [PrettifierStep.GeneralTextParameter]),
+                PrettifierStep.Spaces,
+                () => this.optionalParameter(false, [PrettifierStep.Expression]),
+                PrettifierStep.Spaces,
+                () => this.optionalParameter(false, [PrettifierStep.Expression]),
+                PrettifierStep.Spaces,
+                () => this.optionalParameter(false, [PrettifierStep.GeneralTextParameter]),
+                PrettifierStep.Spaces,
+                PrettifierStep.GeneralTextParameter,
+                PrettifierStep.Spaces,
+                PrettifierStep.Comma,
                 PrettifierStep.Spaces,
                 PrettifierStep.GeneralTextParameter,
                 PrettifierStep.Spaces,
