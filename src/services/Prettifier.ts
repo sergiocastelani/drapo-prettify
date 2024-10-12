@@ -230,25 +230,20 @@ export class Prettifier
         const nextChar2 = nextChar + this.input[this.parserPosition+1];
         if (nextChar == "(")
             this.stepStack.push(PrettifierStep.Spaces, PrettifierStep.CloseParentheses, PrettifierStep.Spaces, PrettifierStep.Expression, PrettifierStep.Spaces, PrettifierStep.OpenParentheses);
-        else if (nextChar2 == "&&" || nextChar2 == "||")
+        else if (nextChar2 == "&&" || nextChar2 == "||" || nextChar2 == "!=" || nextChar2 == "<=" || nextChar2 == ">=")
         {
             this.wrapSimbolInSpaces(2);
             this.stepStack.push(PrettifierStep.Spaces);
         }
-        else if (nextChar2 == "!=" || nextChar2 == "<=" || nextChar2 == ">=")
-        {
-            this.wrapSimbolInSpaces(2);
-            this.stepStack.push(PrettifierStep.Mustache, PrettifierStep.VariableName, PrettifierStep.Spaces);
-        }
         else if (nextChar == "=" || nextChar == ">" || nextChar == "<")
         {
             this.wrapSimbolInSpaces(1);
-            this.stepStack.push(PrettifierStep.Mustache, PrettifierStep.VariableName, PrettifierStep.Spaces);
+            this.stepStack.push(PrettifierStep.Spaces);
         }
-        else if (nextChar == "!")
+        else if (nextChar == "!" || nextChar == "+" || nextChar == "-" || nextChar == "/" || nextChar == "*" || nextChar == "%")
         {
             this.parserPosition++;
-            this.stepStack.push(PrettifierStep.Mustache, PrettifierStep.Spaces);
+            this.stepStack.push(PrettifierStep.Spaces);
         }
         else if (nextChar == "{")
         {
