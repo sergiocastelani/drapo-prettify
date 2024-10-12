@@ -1,13 +1,13 @@
 //run with: npx tsx src/tests/testCompressor.ts
 import { Prettifier } from '../services/Prettifier';
 import { open } from 'node:fs/promises';
-import { chdir } from 'node:process';
+import process from 'node:process';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-chdir(__dirname);
+process.chdir(__dirname);
 
 const prettifier = new Prettifier();
 
@@ -29,7 +29,8 @@ for await (line of file.readLines())
         console.error(currentFile);
         console.error(`${lineNumber}: ${line}`);
         console.error(error);
-        break;
+        process.exit(-1);
     }
 }
+console.log("Success");
 

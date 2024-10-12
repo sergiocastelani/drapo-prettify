@@ -429,8 +429,6 @@ ToggleItemField({{panelUserConfig.ReceiveAlertsByEmail}})
 ToggleItemField({{panelUserConfig.ReceiveAlertsTasksSwitchState}})
 ToggleItemField({{panelUserConfig.RuleTaskNotFullFilled}})
 ToggleItemField({{panelUserConfig.InvalidScenarioRule}})
-\\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\window\delete.html
-confirmListObjectsFolder:{{explorerObjectSelected.Type}}=Folder,confirmListObjectsObject
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\workflow\panelWorkflowCalendarView.html
 UpdateItemField({{panelWorkflowProcessObject.CalendarSummary}},{{panelWorkflowProcessCreateCalendarTemplate.Summary}});UpdateItemField({{panelWorkflowProcessObject.CalendarDescription}},{{panelWorkflowProcessCreateCalendarTemplate.Description}})
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\workflow\panelWorkflowEmailsTemplateEdit.html

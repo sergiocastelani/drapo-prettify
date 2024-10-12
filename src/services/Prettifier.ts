@@ -219,7 +219,7 @@ export class Prettifier
             this.stepStack.push(PrettifierStep.Spaces, PrettifierStep.VariableName)
         else if (nextChar == ")")
             this.stepStack.pop();
-        else if (nextChar == "~")
+        else if (nextChar == "~" || nextChar == "=")
             this.stepStack.push(PrettifierStep.GeneralTextParameter);
         else
             this.parserError("parsing parameter");
