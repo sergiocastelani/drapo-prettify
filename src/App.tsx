@@ -1,8 +1,9 @@
 import {Prettifier} from './services/Prettifier'
 import {Compressor} from './services/Compressor'
 import CodeEditor from '@uiw/react-textarea-code-editor';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css'
+import './assets/custom_highlights.css'
 
 function App()
 {
@@ -22,7 +23,24 @@ function App()
     if (!compactCodeElement)
       return;
     compactCodeElement.value = Compressor.compress(code);
-  }  
+  }
+  
+  useEffect(() => {
+    setTimeout(() => {
+        const ponctuationElements = document.getElementsByClassName("token punctuation");
+        for (let i=0; i < ponctuationElements.length; ++i)
+        {
+          const element = ponctuationElements[i];
+          const content = element.innerHTML;
+          switch (content)
+          {
+            case "{": case "}": element.classList.add("brackets"); break;
+            case "(": case ")": element.classList.add("parentheses"); break;
+          }
+        }
+      }
+      ,0);
+  }, [code]);
 
   return (
     <div id="App">
