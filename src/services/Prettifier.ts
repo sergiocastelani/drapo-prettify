@@ -342,6 +342,7 @@ export class Prettifier
                 () => this.optionalParameter(false, [PrettifierStep.Spaces, PrettifierStep.Expression, PrettifierStep.Spaces]),
                 () => this.optionalParameter(false, [PrettifierStep.GeneralTextParameter]),
                 PrettifierStep.GeneralTextParameter,
+                PrettifierStep.Comma,
                 PrettifierStep.GeneralTextParameter,
                 PrettifierStep.Spaces,
                 PrettifierStep.OpenParentheses, 
