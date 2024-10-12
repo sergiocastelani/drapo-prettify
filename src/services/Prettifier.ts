@@ -313,6 +313,21 @@ export class Prettifier
                 PrettifierStep.OpenParentheses, 
             );
         }
+        else if (this.lastVariableName.toLowerCase() == "execute")
+        {
+            this.stepStack.push(
+                PrettifierStep.CloseParentheses,
+                PrettifierStep.DecOutputIdentation,
+                PrettifierStep.DumpOutputLine,
+                () => this.optionalParameter(true, [PrettifierStep.GeneralTextParameter]),
+                PrettifierStep.Spaces,
+                PrettifierStep.Block,
+                PrettifierStep.IncOutputIdentation,
+                PrettifierStep.DumpOutputLine,
+                PrettifierStep.Spaces,
+                PrettifierStep.OpenParentheses, 
+            );
+        }
         else if (this.lastVariableName.toLowerCase() == "acceptdatachanges")
         {
             this.stepStack.push(
