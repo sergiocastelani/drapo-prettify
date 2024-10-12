@@ -9,26 +9,22 @@ UpdateDataField(panelImageObject,ParentCode,{{panelImageData.ParentCode}});IF({{
 ShowWindow(Loading);PostDataItem(panelImageObject);CloseWindow();CloseWindow()
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\cms\panelImageView.html
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\cube\panelCubeApplication.html
-SELECT CA.Built, CA.Template, CA.Code FROM panelCubeApplication AS CA
 ShowWindow(Loading);UpdateDataField(panelCubeApplicationPostChanges,,{{panelCubeApplication}});PostDataItem(panelCubeApplicationPostChanges);UpdateDataFieldLookup(explorerObjects,Code,{{panelObjectClipboard.Code}},Name,{{panelCubeApplication.Name}});UpdateDataFieldLookup(explorerObjects,Code,{{panelObjectClipboard.Code}},Description,{{panelCubeApplication.Description}});Notify(explorerObjects);CloseWindow()
 UpdateDataField(panelDefinitionClipboard,Icon,pp ppApplication);UpdateDataField(panelDefinitionClipboard,Title,{{word.Application}});IF({{panelObject.ReferenceCode}}<=0,UpdateDataField(panelDefinitionClipboard,Subtitle,{{text.CreateApplication}}),UpdateDataField(panelDefinitionClipboard,Subtitle,{{explorerObjectSelected.Name}}))
 IF({{panelCubeApplication.ConsolidationFeature}}!=,UpdateDataField(panelObjectClipboard,ConsolidationFeatureLoadDefaultParameters,false),UpdateDataField(panelObjectClipboard,ConsolidationFeatureLoadDefaultParameters,true))
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\cube\panelCubeApplicationConsolidationFeature.html
 {{panelObjectClipboard.ConsolidationFeatureLoadDefaultParameters}}
-SELECT C.Value, C.Text FROM {{panelCubeApplicationConsolidationFeatureCurrencies}} AS C INNER JOIN {{panelCubeApplicationConsolidationFeatureObject.AllowedCurrencies}} AS AC ON C.Value = AC
 UpdateDataField(panelDefinitionClipboard,Icon,pp ppApplication);IF({{panelCubeApplicationConsolidationFeatureLoadDefaultParameters}},Execute({{panelCubeApplicationConsolidationFeatureGetDefaultParameters}}))
 UpdateDataField(panelObjectClipboard,AllowedCurrencies,CreateReference({{panelCubeApplicationConsolidationFeatureObject.AllowedCurrencies}}));UpdateDataField(panelObjectClipboard,CompleteListOfCurrencies,{{panelCubeApplicationConsolidationFeatureCurrencies}});UpdateDataField(panelObjectClipboard,StandardCurrency,{{panelCubeApplicationConsolidationFeatureObject.StandardCurrency}});ShowWindow(~/app/cube/panelManageCurrencies.html,panel)
 UpdateDataField(panelObjectClipboard,AllowedCurrencies,CreateReference({{panelCubeApplicationConsolidationFeatureObject.AllowedCurrencies}}));UpdateDataField(panelObjectClipboard,CompleteListOfCurrencies,{{panelCubeApplicationConsolidationFeatureCurrencies}});ShowWindow(~/app/cube/panelCurrenciesShowAll.html,panel)
 UpdateData(panelCubeApplicationConsolidationFeatureObject,{{panelCubeApplicationConsolidationFeatureDefaultOptions}})
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\cube\panelCubeContext.html
-SELECT AA.Key, AA.Value FROM cubeContextAllApplications AS AA INNER JOIN cubeContextListApplicationsAvailableForUser AS SA ON AA.Key = SA.ApplicationCode
 IF({{panelExplorerObjectData.ReferenceCode}}=,UpdateDataField(panelCubeContextApplicationCodeSelected,Value,{{cubeContextListApplications.[0].Key}});UpdateDataField(panelObjectClipboard,ApplicationCode,{{cubeContextListApplications.[0].Key}});UpdateDataField(panelCubeContextTypeSelected,Value,{{cubeContextListContextTypes.[0].Value}}),UpdateDataField(panelCubeContextApplicationCodeSelected,Value,{{panelCubeContextObject.ApplicationCode}});UpdateDataField(panelObjectClipboard,ApplicationCode,{{panelCubeContextObject.ApplicationCode}});UpdateDataField(panelCubeContextTypeSelected,Value,{{panelCubeContextObject.Type}});UpdateDataField(panelCubeContextDescription,Value,{{panelCubeContextObject.Description}}));Execute({{panelCubeContextStartupExecute}})
 UpdateDataField(panelExplorerObjectData,CubeContextType,{{panelCubeContextTypeSelected.Value}},false);UpdateDataField(panelCubeContextDescription,Value,{{panelCubeContextObject.Description}});UpdateDataField(panelCubeContextTypeSelected,Value,{{panelCubeContextObject.Type}})
 UpdateData(panelCubeContextApplyValidation,false);Execute({{panelCubeContextCheckDimensionMemberSelected}});UpdateData(panelCubeContextPostDimensionMembers,{{panelCubeDimensions}});PostDataItem(panelCubeContextPostDimensionMembers)
 ExecuteDataItem(IF({{formfilter.Members.length}}>0,UpdateData(panelCubeContextApplyValidation,true)),formfilter in panelCubeDimensions.FormFilters,true,true)
 ShowWindow(Loading);UpdateDataField(panelCubeContextPostChanges,ExplorerObjectCode,{{panelExplorerObjectData.Code}});UpdateDataField(panelCubeContextPostChanges,ApplicationCode,{{panelCubeContextApplicationCodeSelected.Value}});UpdateDataField(panelCubeContextPostChanges,Type,{{panelCubeContextTypeSelected.Value}});UpdateDataField(panelCubeContextPostChanges,Name,{{panelExplorerObjectData.Name}});UpdateDataField(panelCubeContextPostChanges,Description,{{panelCubeContextDescription.Value}});IF({{panelExplorerObjectData.ReferenceCode}}>0,UpdateDataField(panelCubeContextPostChanges,Code,{{panelExplorerObjectData.ReferenceCode}}));UpdateDataField(panelCubeContextPostChanges,FormFilters,{{panelCubeDimensions.FormFilters}});PostDataItem(panelCubeContextPostChanges);ReloadData(explorerObjects);CloseWindow(panel);CloseWindow(windows)
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\cube\panelCurrenciesShowAll.html
-SELECT A.Value, A.Text FROM panelCurrenciesShowAllSourceList AS A INNER JOIN panelCurrenciesShowAllDataSelection AS S ON A.Value = S
 UpdateDataField(panelDefinitionClipboard,Icon,pp ppApplication);UpdateData(panelCurrenciesShowAllSourceListBackup,{{panelCurrenciesShowAllSourceList}})
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\cube\panelLinkedList.html
 ShowWindow(Loading);UpdateDataField(linkedListObject,LinkedListItems,{{linkedListItems}});UpdateDataField(panelLinkedListPostChanges,,{{linkedListObject}});PostDataItem(panelLinkedListPostChanges);CloseWindow();CloseWindow()
@@ -36,7 +32,6 @@ UpdateItemField({{item.selection}},{{panelLinkedListItemsAllSelected}})
 ExecuteDataItem({{panelLinkedListSelectItem}},item in linkedListItems,true,true)
 ExecuteDataItem(UpdateItemField({{item.selection}},false,false),item in linkedListItems,true,true);IF({{linkedListObject.Code}}=0,UpdateDataField(linkedListObject,ApplicationCode,{{linkedListApplications.[0].Key}}))
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\cube\panelManageCurrencies.html
-SELECT I.Value, I.Text FROM panelSelectCurrencyCompleteListBackup AS I INNER JOIN panelSelectCurrencySelected AS ITS ON I.Value = ITS
 UpdateDataField(panelDefinitionClipboard,Icon,pp ppApplication);UpdateData(panelSelectCurrencyCompleteListBackup,{{panelSelectCurrencyCompleteList}})
 UpdateDataFieldLookup(panelSelectCurrencyCompleteList,Value,{{item}},Selected,true,false)
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\cube\windowLock.html
@@ -421,8 +416,6 @@ Execute(UpdateDataField(panelSmartIncAttribute,Value,{{panelDefinitionClipboard.
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\textboxsmart\panelSmartFunctionParameter.html
 UpdateDataField(panelDefinitionClipboard,TextBoxSmartSyntax,);Execute({{workflowStarterParameterEditObject}});IF({{workflowStarterParameterEditObject.SyntaxValue}}!=,UpdateDataField(panelSmartIncAttribute,Value,{{workflowStarterParameterEditObject.SyntaxValue}});UpdateDataField(panelSmartIncAttribute,Type,Edit),UpdateDataField(panelSmartIncAttribute,Type,Replace))
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\userconfig\panelThemeEdit.html
-SELECT T.Category, T.IsSimplified, T.Variables FROM panelThemeCreateOrGetObject AS T WHERE T.IsSimplified = true
-SELECT T.Category, T.IsSimplified, T.Variables FROM panelThemeCreateOrGetObject AS T WHERE T.IsSimplified = false
 IF(({{panelTheme.Variables.length}}>0&&{{panelTheme.Name}}),UpdateData(panelThemeCreateOrGetObject,{{panelTheme.Variables}}),ClearData({{panelTheme.Variables}},false));UpdateItemField({{panelThemeSimplifiedVariables.[0].Show}},true)
 ExecuteDataItem(AddDataItem(panelThemeApplyVariables,{{variables}}),variables in panelThemeSimplifiedVariables,true,true)
 ExecuteDataItem(AddDataItem(panelThemeApplyVariables,{{variables}}),variables in panelThemeAdvancedVariables,true,true)
@@ -434,7 +427,6 @@ UpdateData(themePostChanges,{{themes}});PostDataItem(themePostChanges)
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\userconfig\panelUserConfig.html
 UpdateDataField(windowDefinition,Title,{{word.Configurations}})
 UpdateDataField(windowDefinition,Title,{{text.ApplicationConfigTitle}})
-SELECT SA.ApplicationCode AS Key, LA.Value AS Value FROM panelApplicationConfigApplications AS LA INNER JOIN panelApplicationConfigListApplicationsByUser AS SA ON LA.Key = SA.ApplicationCode
 UpdateDataField(windowDefinition,Title,{{text.ChangePassword}})
 UpdateItemField({{panelPasswordChangePost.OldPassword}},{{panelPassword.OldPassword}});UpdateItemField({{panelPasswordChangePost.NewPassword}},{{panelPassword.NewPassword}});PostDataItem(panelPasswordChangePost)
 ToggleItemField({{panelUserConfig.ReceiveAlertsByEmail}})
@@ -442,7 +434,6 @@ ToggleItemField({{panelUserConfig.ReceiveAlertsTasksSwitchState}})
 ToggleItemField({{panelUserConfig.RuleTaskNotFullFilled}})
 ToggleItemField({{panelUserConfig.InvalidScenarioRule}})
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\window\delete.html
-SELECT Code, Name, Icon, ChildObjects FROM confirmGetFolderHierarchyObjects AS O ORDER BY Name
 confirmListObjectsFolder:{{explorerObjectSelected.Type}}=Folder,confirmListObjectsObject
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\workflow\panelWorkflowCalendarView.html
 UpdateItemField({{panelWorkflowProcessObject.CalendarSummary}},{{panelWorkflowProcessCreateCalendarTemplate.Summary}});UpdateItemField({{panelWorkflowProcessObject.CalendarDescription}},{{panelWorkflowProcessCreateCalendarTemplate.Description}})
@@ -472,12 +463,9 @@ SetClipboard({{panelNoteData.Note}});UpdateDataField(panelNoteObjectControllers,
 IF({{panelWorkflowProcessParameter.Name.length}}=0,UpdateDataField(panelWorkflowProcessParameter,Type,2);UpdateDataField(panelWorkflowProcessParameter,Code,CreateGuid()))
 ToggleItemField({{panelWorkflowProcessParameter.Internal}});IF({{panelWorkflowProcessParameter.Internal}},UpdateDataField(panelWorkflowProcessParameter,Nullable,true);UpdateDataField(panelWorkflowProcessParameter,CannotNullable,true),UpdateDataField(panelWorkflowProcessParameter,CannotNullable,false))
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\workflow\panelWorkflowParametersView.html
-SELECT P.Code, P.Name, P.Type, P.Internal, P.Nullable, T.Name AS TypeName FROM {{panelWorkflowProcessObject.Parameters}} AS P INNER JOIN panelWorkflowParameterTypes AS T ON P.Type = T.Value
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\workflow\panelWorkflowProperties.html
 IF({{panelWorkflowProcessSystemParameters.view}}=1,UpdateDataField(panelWorkflowProcessViewEdit,CannotEdit,true),UpdateDataField(panelWorkflowProcessViewEdit,CannotEdit,false))
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\workflow\panelWorkflowResponsiblesEdit.html
-SELECT DTRP.ParameterCode, DTRP.DataTableResponsibleColumnName, P.Name FROM {{panelWorkflowProcessObject.DataTableResponsibleParameters}} AS DTRP INNER JOIN {{panelWorkflowProcessObject.Parameters}} AS P ON DTRP.ParameterCode = P.Code
-SELECT DTC.Code, DTC.Name FROM {{panelWorkflowProcessDataTable.Columns}} AS DTC
 UpdateData(panelWorkflowProcessDataTableResponsibleParameterReference,{{panelWorkflowProcessDataTableResponsibleParameterEmpty}},false);IF({{panelWorkflowProcessObject.DataTableResponsible}}=,UpdateDataField(panelWorkflowProcessObject,CannotEdit,true),UpdateDataField(panelWorkflowProcessObject,CannotEdit,false);UpdateItemField({{panelWorkflowProcessObject.UseDataTable}},true);{{panelWorkflowProcessDataTableResponsibleSelect}})
 IF({{panelWorkflowProcessObject.DataTableResponsible}}!=,ExecuteDataItem(IF({{panelWorkflowProcessObject.DataTableResponsible}}={{datatable.Code}},UpdateItemField({{panelWorkflowProcessDataTableFound}},true)),datatable in panelWorkflowProcessDataTables,true,true,datatable in datatable.Objects),);IF({{panelWorkflowProcessDataTableFound}}=false,ExecuteDataItem(IF({{panelWorkflowProcessObject.DataTableResponsible}}={{datatable.Code}},AddDataItem({{panelWorkflowProcessDataTables}},{{datatable}});UpdateDataField(panelWorkflowProcessDataTableResponsible,,{{datatable}})),datatable in panelWorkflowProcessObject.DataTables,true,true))
 IF(!{{panelWorkflowProcessObject.UseDataTable}},UpdateItemField({{panelWorkflowProcessObject.DataTableResponsible}},);{{panelWorkflowProcessResponsiblesDefault}})
@@ -487,10 +475,6 @@ ExecuteDataItem(IF({{datatable.Code}}={{panelWorkflowProcessObject.DataTableResp
 {{panelObjectClipboard.DataTableResponsibleParameter}}
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\workflow\panelWorkflowResponsiblesStructureCreate.html
 {{panelObjectClipboard.DataTableResponsibleParameter}}
-SELECT P.Code, P.Name FROM {{panelWorkflowProcessObject.Parameters}} AS P WHERE P.Type = 0
-SELECT P.Code, P.Name FROM {{panelWorkflowProcessObject.Parameters}} AS P WHERE P.Type = 6
-SELECT P.Code, P.Name FROM {{panelWorkflowProcessObject.Parameters}} AS P WHERE P.Type = 7
-SELECT AA.Key, AA.Value FROM panelWorkflowProcessAllApplications AS AA INNER JOIN panelWorkflowProcessListApplicationsAvailableForUser AS SA ON AA.Key = SA.ApplicationCode
 UpdateDataField(panelWorkflowProcessDataTableParameterDefault,DataTableResponsibleColumnName,{{word.Entity}});UpdateDataField(panelWorkflowProcessDataTableResponsibleParameter,,{{panelWorkflowProcessDataTableParameterDefault}});{{panelWorkflowProcessResponsibleParametersCreateUpdate}}
 UpdateDataField(panelWorkflowProcessDataTableParameterDefault,DataTableResponsibleColumnName,{{word.Entity}});UpdateDataField(panelWorkflowProcessDataTableResponsibleParameter,,{{panelWorkflowProcessDataTableParameterDefault}});{{panelWorkflowProcessResponsibleParametersCreateUpdate}}
 UpdateDataField(panelWorkflowProcessDataTableParameterDefault,DataTableResponsibleColumnName,{{word.Responsible}});UpdateDataField(panelWorkflowProcessDataTableResponsibleParameter,,{{panelWorkflowProcessDataTableParameterDefault}});{{panelWorkflowProcessResponsibleParametersCreateUpdate}}
@@ -511,11 +495,9 @@ UpdateDataField(panelStarterObject,Name,{{panelExplorerObjectData.Name}});Update
 UpdateDataField(panelDefinitionClipboard,Subtitle,{{text.ProcessStarterStartInstance}})
 UpdateData(panelWorkflowStarterInstance,{{panelWorkflowStarterObjectData}});HideWindow();PostDataItem(panelWorkflowStarterInstance)
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\workflow\panelWorkflowTaskIdentifierView.html
-SELECT DTC.Code, DTC.Name, DTC.ColumnName FROM {{panelWorkflowProcessDataTable.Columns}} AS DTC
 UpdateItemField({{panelWorkflowProcessDataTableTrigger.Code}},{{panelWorkflowProcessObject.DataTableTaskIdentifier}})
 ShowWindow(Loading);UpdateItemField({{panelWorkflowProcessObject.DataTableTaskIdentifier}},{{panelWorkflowProcessDataTableCreateTaskIdentifier.Code}});ReloadData(panelWorkflowHierarchyDataTables);ExecuteDataItem(IF({{column.Name}}={{text.TaskIdentifier}},UpdateItemField({{panelWorkflowProcessObject.DataTableTaskIdentifierColumnName}},{{column.ColumnName}})),column in panelWorkflowProcessDataTableCreateTaskIdentifier.Columns,true,true);CloseWindow()
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\workflow\panelWorkflowTransferOwnershipView.html
-SELECT DTC.Code, DTC.Name, DTC.ColumnName FROM {{panelWorkflowProcessDataTable.Columns}} AS DTC
 UpdateItemField({{panelWorkflowProcessDataTableTrigger.Code}},{{panelWorkflowProcessObject.DataTableTransferOwnership}});UpdateItemField({{panelWorkflowProcessDataTableColumnName.From}},{{word.From}});UpdateItemField({{panelWorkflowProcessDataTableColumnName.To}},{{word.To2}})
 ShowWindow(Loading);UpdateItemField({{panelWorkflowProcessObject.DataTableTransferOwnership}},{{panelWorkflowProcessDataTableCreateTransferOwnership.Code}});ReloadData(panelWorkflowHierarchyDataTables);ExecuteDataItem(IF({{column.Name}}={{panelWorkflowProcessDataTableColumnName.From}},UpdateItemField({{panelWorkflowProcessObject.DataTableTransferOwnershipToColumnName}},{{column.ColumnName}}));IF({{column.Name}}={{panelWorkflowProcessDataTableColumnName.To}},UpdateItemField({{panelWorkflowProcessObject.DataTableTransferOwnershipToColumnName}},{{column.ColumnName}})),column in panelWorkflowProcessDataTableColumns,true,true);CloseWindow()
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\workflow\process.html
@@ -604,13 +586,11 @@ PostData(panelWorksheetMapping);HideWindow();IF({{panelWorksheetProperties.isnew
 IF(!{{panelWorksheetMapping.Name}},UpdateDataField(panelWorksheetProperties,isnew,true))
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\components\grouplistview\panelGroupNewEdit.html
 {{panelObjectClipboard.codeGroupsSelectedGroupClipboard}}
-SELECT LG.Code, LG.Name FROM panelGroupNewEditListGroupsBackup AS LG INNER JOIN panelDataSelection AS SG ON LG.Code = SG
 UpdateData(panelGroupNewEditListGroupsBackup,{{panelGroupNewEditListGroups}})
 UpdateDataFieldLookup(panelGroupNewEditListGroups,Code,{{groupSelected}},Selected,true,false)
 RemoveDataItem(panelDataSelection,{{groupSelected}})
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\components\grouplistview\panelGroupView.html
 {{panelObjectClipboard.codeGroupsSelectedGroupClipboard}}
-SELECT LG.Code, LG.Name FROM panelGroupNewEditListGroupsBackup AS LG INNER JOIN panelDataSelection AS SG ON LG.Code = SG
 UpdateData(panelGroupNewEditListGroupsBackup,{{panelGroupNewEditListGroups}})
 UpdateDataFieldLookup(panelGroupNewEditListGroups,Code,{{groupSelected}},Selected,true,false)
 RemoveDataItem(panelDataSelection,{{groupSelected}})
@@ -622,21 +602,16 @@ UpdateData(panelMemberSelectedList,{{panelObjectClipboardCubeDimensions.Dimensio
 UpdateDataField(panelDefinitionClipboard,Icon,{{panelExplorerObjectData.TypeImageClass}});UpdateDataField(panelDefinitionClipboard,Title,{{panelExplorerObjectData.TypeName}});UpdateDataField(panelDefinitionClipboard,Subtitle,{{panelExplorerObjectData.Name}});UpdateDataField(panelDefinitionClipboard,SectorFriend,GetSector());UpdateDataField(panelObjectClipboard,formfilterReference,CreateReference({{panelMemberSelectionFormFilter}}));ShowWindow(~/app/components/membergrid/panelMemberSelectionMembersTabAdd.html,panel)
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\components\objectlistbox\panelObjectNewEdit.html
 {{panelObjectClipboard.codeObjectsSelectedObjectClipboard}}
-SELECT LO.Code AS Code, LO.Name, LO.TypeImageClass FROM panelObjectNewEditListObjectsBackup AS LO INNER JOIN panelDataSelection AS SO ON LO.Code = SO
 UpdateData(panelObjectNewEditListObjectsBackup,{{panelObjectNewEditListObjects}})
 UpdateDataFieldLookup(panelObjectNewEditListObjects,Code,{{objectSelected}},Selected,true,false)
 RemoveDataItem(panelDataSelection,{{objectSelected}})
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\components\objectlistbox\panelObjectView.html
 {{panelObjectClipboard.codeObjectsSelectedObjectClipboard}}
-SELECT LO.Code AS Code, LO.Name, LO.TypeImageClass FROM panelObjectNewEditListObjects AS LO INNER JOIN panelDataSelection AS SO ON LO.Code = SO WHERE LO.Selected = 
 UpdateData(panelObjectNewEditListObjectsBackup,{{panelObjectNewEditListObjects}})
 UpdateDataFieldLookup(panelObjectNewEditListObjects,Code,{{objectSelected}},Selected,true,false)
 RemoveDataItem(panelDataSelection,{{objectSelected}})
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\components\objectpermissionlistbox\panelObjectPermissionListBoxNewEdit.html
 {{panelObjectClipboard.codeObjectsSelectedObjectClipboard}}
-SELECT Code, Name, TypeImageClass, Path FROM panelObjectPermissionListBoxNewEditListObjectsSource AS O ORDER BY Name
-SELECT LO.Code AS Code, LO.Name, LO.TypeImageClass, SO.PermissionType FROM panelObjectPermissionListBoxNewEditListObjectsBackup AS LO INNER JOIN panelObjectPermissionListBoxNewEditSelection AS SO ON LO.Code = SO.ObjectCode
-SELECT L.Code, L.Name, L.TypeImageClass, P.Value AS PermissionText FROM panelObjectPermissionListBoxNewEditSelectionNames AS L INNER JOIN panelObjectPermissionListBoxNewEditListPermissions AS P ON L.PermissionType = P.Key
 UpdateData(panelObjectPermissionListBoxNewEditListObjectsBackup,{{panelObjectPermissionListBoxNewEditListObjects}})
 UpdateDataFieldLookup(panelObjectPermissionListBoxNewEditListObjects,Code,{{objectSelected.ObjectCode}},Selected,true,false);UpdateDataFieldLookup(panelObjectPermissionListBoxNewEditListObjects,Code,{{objectSelected.ObjectCode}},PermissionType,{{objectSelected.PermissionType}},false);
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\components\objectpermissionlistbox\panelObjectPermissionListBoxView.html
@@ -644,39 +619,31 @@ UpdateDataFieldLookup(panelObjectPermissionListBoxNewEditListObjects,Code,{{obje
 UpdateData(panelObjectPermissionListBoxViewSelectedTypePermissionsBackup,{{panelObjectPermissionListBoxViewSelectedTypePermissions}})
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\components\rolelistbox\panelRoleNewEdit.html
 {{panelObjectClipboard.codeRolesSelectedRoleClipboard}}
-SELECT A.Code, A.Name FROM panelRoleNewEditListRolesBackup AS A INNER JOIN panelDataSelection AS S ON A.Code = S
 UpdateData(panelRoleNewEditListRolesBackup,{{panelRoleNewEditListRoles}})
 UpdateDataFieldLookup(panelRoleNewEditListRoles,Code,{{roleSelected}},Selected,true,false)
 RemoveDataItem(panelDataSelection,{{roleSelected}})
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\components\rolelistbox\panelRoleView.html
 {{panelObjectClipboard.codeRolesSelectedRoleClipboard}}
-SELECT A.Code, A.Name, S as Selected FROM panelRoleNewEditListRoles AS A INNER JOIN panelDataSelection AS S ON A.Code = S
 UpdateData(panelRoleNewEditListRolesBackup,{{panelRoleNewEditListRoles}})
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\components\textboxsmart\panelSmartInc.html
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\components\userlistview\panelUserNewEdit.html
 {{panelObjectClipboard.codeUsersSelectedUserClipboard}}
-SELECT LU.UserCode, LU.FullName, LU.Email FROM panelUserNewEditListUsersBackup AS LU INNER JOIN panelDataSelection AS SU ON LU.UserCode = SU
 UpdateData(panelUserNewEditListUsersBackup,{{panelUserNewEditListUsers}})
 UpdateDataFieldLookup(panelUserNewEditListUsers,UserCode,{{userSelected}},Selected,true,false)
 RemoveDataItem(panelDataSelection,{{userSelected}})
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\components\userlistview\panelUserView.html
 {{panelObjectClipboard.codeUsersSelectedUserClipboard}}
-SELECT LU.UserCode, LU.FullName, LU.Email FROM panelUserNewEditListUsersBackup AS LU INNER JOIN panelDataSelection AS SU ON LU.UserCode = SU
 UpdateData(panelUserNewEditListUsersBackup,{{panelUserNewEditListUsers}})
 UpdateDataFieldLookup(panelUserNewEditListUsers,UserCode,{{userSelected}},Selected,true,false)
 RemoveDataItem(panelDataSelection,{{userSelected}})
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\cube\application\panelApplicationProfileUser.html
 {{panelObjectClipboard.codeItensSelectedItensClipboard}}
-SELECT SA.ApplicationCode AS Selected, LA.Name, LA.ApplicationCode, LA.Type, LA.UserProfilesType FROM panelApplicationProfileUserAllApplications AS LA LEFT JOIN panelApplicationProfileUserDataSelection AS SA ON LA.ApplicationCode = SA.ApplicationCode
-SELECT PA.Name, PA.ApplicationCode, PU.Name as Profile FROM panelApplicationProfileUserApplications AS PA INNER JOIN panelApplicationProfileUserAllProfiles AS PU ON PA.Type = PU.Code WHERE PA.Selected IS NOT NULL
 AddDataItem(panelApplicationProfileUserDataSelection,{{panelApplicationProfileUserNewObject}})
 UpdateData(panelApplicationProfileUserAllApplicationsBackup,{{panelApplicationProfileUserAllApplications}})
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\cube\modelhistory\panelModelHistory.html
-SELECT LA.Key, LA.Value FROM panelModelHistoryAllApplication AS LA INNER JOIN panelModelHistoryAllApplicationsByUser AS SA ON LA.Key = SA.ApplicationCode
 UpdateDataField(panelDefinitionClipboard,Icon,pp ppChange-history);UpdateDataField(panelDefinitionClipboard,Title,{{text.ModelHistory}});UpdateDataField(panelDefinitionClipboard,Subtitle,);
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\cube\scenariotype\panelAuditScenarioType.html
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\cube\scenariotype\panelEditScenarioType.html
-SELECT LA.Key, LA.Value FROM panelEditScenarioTypeApplications AS LA INNER JOIN panelEditScenarioTypeListApplicationsByUser AS SA ON LA.Key = SA.ApplicationCode
 IF(({{__browser.Height}} < 800),UpdateDataField(panelEditScenarioTypeShowListFilter,state,false))
 UpdateItemField({{item.selection}},{{panelEditScenarioTypeItemsAllSelected}},false)
 ExecuteDataItem({{functionPanelEditScenarioTypeSelectItem}},item in panelEditScenarioTypeStates.ScenariosState,true,true);Notify(panelEditScenarioTypeStates)
@@ -687,7 +654,6 @@ IF({{windowDataLoadEdit.Code}}!=0,UpdateDataField(windowDataLoadFileCode,,{{wind
 UpdateDataField(windowDataLoadDestinationObject,scopedeletechecked,false);UpdateDataField(windowDataLoadObjectPostSave,Append,{{windowDataLoadEdit.Configuration.Append}});UpdateDataField(windowDataLoadObjectPostSave,Online,{{windowDataLoadEdit.Configuration.Online}});UpdateDataField(windowDataLoadObjectPostSave,ExecuteOnSave,{{windowDataLoadEdit.Configuration.ExecuteOnSave}});UpdateDataField(windowDataLoadDestinationDataSourceOptionDefaultValueForValue,Value,{{word.File}});AddDataItem(windowDataLoadDestinationDataSourceOptionForValue,windowDataLoadDestinationDataSourceOptionDefaultValueForValue);UpdateDataField(windowDataLoadMappingObjectDataForm,validationmapping,true);
 ShowWindow(Loading);PostDataItem(windowDataLoadFilePreviewCSVObject,windowDataLoadFileCode);CloseWindow()
 UpdateDataField(panelDefinitionClipboard,Icon,pp ppProperties);UpdateDataField(panelDefinitionClipboard,Title,{{text.ConfigureCSV}});UpdateDataField(panelDefinitionClipboard,Subtitle,{{text.ConfigureYourFile}});UpdateDataField(panelObjectClipboard,configurations,CreateReference({{windowDataLoadFilePreviewTableProperties}}));ShowWindow(~/app/dataload/dataloadstructure/panels/panelDataLoadFilePreviewConfigure.html,panel)
-SELECT DF.Value, DF.Text FROM windowDataLoadMappingDataForm AS DF INNER JOIN windowDataLoadMappingArrayDataFormCodes AS MC ON DF.Value = MC
 updateDataField(windowDataLoadMappingObjectDataForm,validationmapping,false);ExecuteDataItem(IF({{mapping.Source.Key}}!=,updateDataField(windowDataLoadMappingObjectDataForm,validationmapping,true)),mapping in windowDataLoadMappingDataFormColumn.MappingColumns,true,true)
 UnloadData(windowDataLoadDestinationDataSourceFile);UpdateItemField({{windowDataLoadDestinationDataSourceFileBody.FileCode}},{{windowDataLoadFileCode}});UpdateItemField({{windowDataLoadDestinationDataSourceFileBody.FileProperties}},{{windowDataLoadFilePreviewTableProperties}});UpdateItemField({{windowDataLoadDestinationDataSourceFileBody.DataFormCodeCollection}},{{windowDataLoadMappingArrayDataFormCodes}})
 UpdateDataField(windowDataLoadDestinationObject,scopedeletechecked,false);ExecuteDataItem(IF({{destination.SourceType}}=0,IF({{destination.ScopeDelete.Members.length}}<=0,UpdateDataField(windowDataLoadDestinationObject,scopedeletechecked,true,false);UpdateItemField({{destination.validationscopedelete}},true),UpdateItemField({{destination.validationscopedelete}},false))),destination in windowDataLoadDestinationMapping,{{destination.UseScopeDelete}}=true,true);Notify(windowDataLoadDestinationObject);Notify(windowDataLoadDestinationMapping);Execute({{windowDataLoadActionSaveValid}})
@@ -698,7 +664,6 @@ UpdateDataField(panelDefinitionClipboard,Icon,pp ppChange-history);UpdateDataFie
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\dataload\executionhistory\panelExecutionHistoryInfo.html
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\dataload\dataloadstructure\panels\panelDataLoadFilePreviewConfigure.html
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\dataload\dataloadstructure\panels\panelExecuteDataLoad.html
-SELECT P.Code AS Key, P.Value AS Value FROM panelExecuteParameterCollection AS P
 UpdateDataField(panelExecuteDataLoadRun,ExplorerObjectCode,{{panelObjectClipboard.ObjectCode}});UpdateDataField(panelExecuteDataLoadRun,ParameterValuesChanged,{{panelExecuteParametersUpdateValue}});UpdateDataField(panelExecuteDataLoadRun,FileCode,{{panelExecuteDataLoadFileCode}});PostDataItem(panelExecuteDataLoadRun,panelExecuteDataLoadRunResponse)
 UpdateDataField(panelExecuteDataLoadFileCode,,{{panelExecuteDataLoadGetExecuteProperties.FileCode}});UpdateDataField(panelExecuteDataLoadFilePreviewCSVObject,Code,{{panelExecuteDataLoadGetData.Configuration.FileCode}});UpdateDataField(panelExecuteDataLoadFilePreviewCSVObject,ObjectCode,{{panelObjectClipboard.ObjectCode}});UpdateItemField({{panelExecuteDataLoadFilePreviewCSVObject.Content}},{{panelExecuteDataloadGetFile.Value}});UpdateItemField({{panelExecuteDataLoadFilePreviewCSVObject.Name}},{{panelExecuteDataloadGetFile.Text}});UpdateData(panelExecuteParameterCollection,{{panelExecuteDataLoadGetExecuteProperties.Parameters}})
 ShowWindow(Loading);PostDataItem(panelExecuteDataLoadFilePreviewCSVObject,panelExecuteDataLoadFileCode);CloseWindow()
@@ -717,13 +682,11 @@ SetClipboard({{panelLicenseManagerExplorerInfo.LicenseManegerCopy}});UpdateDataF
 UpdateDataField(panelLicenseManagerExplorerDownloadLicense,download,true);CreateTimer(UpdateDataField(panelLicenseManagerExplorerDownloadLicense,download,false),1500);Execute({{panelLicenseManagerExplorerDownloadFunction}})
 ShowWindow(Loading);UpdateDataField(panelLicenseManagerUpdateObjectSave,,{{panelLicenseManagerUpdateObject}});PostDataItem(panelLicenseManagerUpdateObjectSave);Execute({{panelLicenseManagerReloadList}},{{panelDefinitionClipboard.SectorParent}});CloseWindow();CloseWindow()
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\report\reports\panelSynchronizeReport.html
-SELECT Count(RI.Code) AS Count FROM panelSynchronizeReportItens AS RI WHERE Selected = true
 IF({{panelSynchronizeReportExplorerFolder.Code}}>0,UpdateItemField({{panelSynchronizeReportExplorerObject.Code}},{{panelSynchronizeReportExplorerFolder.Code}});UpdateItemField({{panelSynchronizeReportExplorerObject.Name}},{{panelSynchronizeReportExplorerFolder.Name}});UpdateItemField({{panelSynchronizeReportExplorerObjectReference.Code}},{{panelSynchronizeReportExplorerFolder.Code}},false))
 UpdateDataField(panelDefinitionClipboard,Title,{{word.Folders}});UpdateDataField(panelDefinitionClipboard,Subtitle,);UpdateDataField(panelDefinitionClipboard,Icon,pp ppClosedFolder);ShowWindow(~/app/explorer/panelExplorerFolders.html,panel)
 ExecuteDataItem(IF({{panelSynchronizeReportResumeSelectAll}},UpdateItemField({{report.Selected}},true,false),UpdateItemField({{report.Selected}},false,false)),report in panelSynchronizeReportItensResume,true,true);Notify(panelSynchronizeReportItensResume)
 IF({{panelSynchronizeReportResumeSelected}}=false,UpdateItemField({{panelSynchronizeReportResumeSelectAll}},false));ExecuteDataItem(IF({{report.Selected}}=false,UpdateData(panelSynchronizeReportResumeSelected,false)),report in panelSynchronizeReportItensResume,true,true);IF({{panelSynchronizeReportResumeSelected}},UpdateItemField({{panelSynchronizeReportResumeSelectAll}},true),UpdateItemField({{panelSynchronizeReportResumeSelectAll}},false))
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\report\reportserver\panelReportServer.html
-SELECT Count(RI.Code) AS Count FROM panelSynchronizeReportItens AS RI WHERE Selected = true
 IF({{panelSynchronizeReportExplorerFolder.Code}}>0,UpdateItemField({{panelSynchronizeReportExplorerObject.Code}},{{panelSynchronizeReportExplorerFolder.Code}});UpdateItemField({{panelSynchronizeReportExplorerObject.Name}},{{panelSynchronizeReportExplorerFolder.Name}});UpdateItemField({{panelSynchronizeReportExplorerObjectReference.Code}},{{panelSynchronizeReportExplorerFolder.Code}},false))
 UpdateDataField(panelDefinitionClipboard,Title,{{word.Folders}});UpdateDataField(panelDefinitionClipboard,Subtitle,);UpdateDataField(panelDefinitionClipboard,Icon,pp ppClosedFolder);ShowWindow(~/app/explorer/panelExplorerFolders.html,panel)
 ExecuteDataItem(IF({{panelSynchronizeReportResumeSelectAll}},UpdateItemField({{report.Selected}},true,false),UpdateItemField({{report.Selected}},false,false)),report in panelSynchronizeReportItensResume,true,true);Notify(panelSynchronizeReportItensResume)
@@ -744,23 +707,16 @@ UpdateDataField(panelSecurityRoleOrEditObjectSave,ApplicationCode,{{panelSecurit
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\security\role\panelSecurityRoleTabs.html
 ShowWindow(Loading);PostDataItem(panelSecurityRoleSelectedUsersList,);PostDataItem(panelSecurityRoleSelectedGroupList,);CloseWindow()
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\security\transferowner\panelTransferOwner.html
-SELECT AO.Code, AO.Name, AO.Icon, AO.Path, AO.ObjecType, AO.OwnerCode, AO.OwnerName, AO.OwnerIsActive, AO.Selected FROM panelTransferOwnerAllObjects AS AO
 UpdateData(panelTransferOwnerAllObjectsBackup,{{panelTransferOwnerAllObjects}})
 UpdateDataFieldLookup(panelTransferOwnerAllObjects,Code,{{objectSelected.ObjectCode}},Selected,true,false)
 AddDataItem(panelTransferOwnerObjectsSelected,{{object.Code}});UpdateItemField({{object.Selected}},true)
 RemoveDataItem(panelTransferOwnerObjectsSelected,{{object.Code}});UpdateItemField({{object.Selected}},false)
 ExecuteDataItem({{panelTransferOwnerSelectObject}},object in panelTransferOwnerAllObjects,true,true,object in object.ChildrenObjects);Notify(panelTransferOwnerFlatListObjects)
 ExecuteDataItem({{panelTransferOwnerUnselectObject}},object in panelTransferOwnerAllObjects,true,true,object in object.ChildrenObjects);Notify(panelTransferOwnerFlatListObjects)
-SELECT AO.Code, AO.Name, AO.Icon, AO.Path, AO.ObjecType, AO.OwnerCode, AO.OwnerName, AO.OwnerIsActive FROM panelTransferOwnerFlatListObjects AS AO INNER JOIN panelTransferOwnerObjectsSelected as OS ON AO.Code = OS
-SELECT AO.Code, AO.Name, AO.Icon, AO.Path, AO.ObjecType, AO.OwnerCode, AO.OwnerName, AO.OwnerIsActive FROM panelTransferOwnerFlatListObjects AS AO INNER JOIN panelTransferOwnerObjectsSelected as OS ON AO.Code = OS
-SELECT PO.Text as FullName FROM panelTransferOwnerPropertiesOwner AS PO INNER JOIN panelTransferOwnerOldResponsible AS OR ON PO.Value = OR
 IF({{panelTransferOwnerDataSave}},CloseWindow(),UnloadData(panelTransferOwnerDataSave));
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\security\user\panelSecurityUserApplications.html
 UpdateDataField(panelDefinitionClipboard,Icon,{{panelSecurityUserClipboard.TypeImageClass}});UpdateDataField(panelDefinitionClipboard,Title,{{panelSecurityUserClipboard.Type}});UpdateDataField(panelDefinitionClipboard,Subtitle,{{panelSecurityUserClipboard.Name}});UpdateDataField(panelDefinitionClipboard,Listname,{{word.Applications}});UpdateDataField(panelObjectClipboard,applicationsSelected,CreateReference({{panelSecurityUserListApplicationsByUser}}));UpdateDataField(panelObjectClipboard,applicationsAvailable,CreateReference({{panelSecurityUserListApplicationsAvailableForUser}}));UpdateDataField(panelObjectClipboard,profiles,CreateReference({{panelSecurityUserListAllProfiles}}));ShowWindow(~/app/security/user/panelSecurityUserApplicationsManage.html,panel)
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\security\user\panelSecurityUserApplicationsManage.html
-SELECT S.ApplicationCode, A.Name AS ApplicationName, S.UserProfileType AS ProfileCode FROM panelApplicationsSelected AS S INNER JOIN panelApplicationsAvailable AS A ON S.ApplicationCode = A.ApplicationCode
-SELECT S.ApplicationCode, S.ApplicationName, S.ProfileCode, P.Name AS ProfileName FROM panelApplicationsSelectedWithApplication AS S INNER JOIN panelApplicationsProfiles AS P ON S.ProfileCode = P.Code
-SELECT S.ApplicationCode AS Selected, S.UserProfileType, A.ApplicationCode, A.Name, A.Type, A.UserProfilesType FROM panelApplicationsAvailable AS A LEFT JOIN panelApplicationsSelected AS S ON A.ApplicationCode = S.ApplicationCode
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\security\user\panelSecurityUserNewOrEdit.html
 IF({{panelSecurityUserNewOrEditObjectClipboard.Code}}=,UpdateData(panelSecurityUserNewOrEditParentCode,{{explorerFolderSelected.Code}}))
 UpdateDataField(panelSecurityUserNewOrEditObjectSave,ApplicationsAccessAllowed,{{panelSecurityUserNewOrEditArrayApplications}})
@@ -768,11 +724,6 @@ IF(HasDataChanges(,panelSecurityUserNewOrEditObjectSave),ShowWindow(Loading);Exe
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\security\user\panelSecurityUserServicesNewOrEdit.html
 SetClipboard({{panelSecurityUserServiceObject.Token}});UpdateDataField(panelSecurityUserServiceObjectControllers,copy,true);CreateTimer(UpdateDataField(panelSecurityUserServiceObjectControllers,copy,false),1500)
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\security\user\panelSecurityUserTabs.html
-SELECT SA.ApplicationCode, LA.Name, SA.UserProfileType FROM panelSecurityUserListApplicationsAvailableForUser AS LA INNER JOIN panelSecurityUserListApplicationsByUser AS SA ON LA.ApplicationCode = SA.ApplicationCode
-SELECT LA.Name as ApplicationName, LP.Name as ProfileName, LP.Code, LA.ApplicationCode FROM panelSecurityUserApplicationsByUser AS LA INNER JOIN panelSecurityUserListAllProfiles AS LP ON LA.UserProfileType = LP.Code
-SELECT R.RoleCode, G.Name AS GroupName FROM {{panelSecurityUserRolesByGroups}} AS R INNER JOIN panelSecurityUserListAllAvailableGroups AS G ON R.GroupCode = G.Code
-SELECT R.Name AS RoleName, G.GroupName AS GroupName FROM panelSecurityUserListAvailableRoles AS R INNER JOIN {{panelSecurityUserRolesByGroupsWithGroup}} AS G ON R.Code = G.RoleCode
-SELECT LA.Key, LA.Value FROM panelSecurityUserAllApplications AS LA INNER JOIN panelSecurityUserSelectedApplications AS SA ON LA.Key = SA.ApplicationCode
 UpdateData(panelSecurityUserFeatureApplicationCode,{{panelSecurityUserApplicationsInserted.[0].Key}});UpdateData(panelSecurityUserFeaturesGroupsListSelected,{{panelSecurityUserSelectedGroupList}});PostDataItem(panelSecurityUserFeaturesGroupsListSelected)
 UpdateDataField(panelDefinitionClipboard,Icon,{{panelSecurityUserClipboard.TypeImageClass}});UpdateDataField(panelDefinitionClipboard,Title,{{panelSecurityUserClipboard.Type}});UpdateDataField(panelDefinitionClipboard,Subtitle,{{panelSecurityUserClipboard.Name}})
 ShowWindow(Loading);IF(HasDataChanges(,panelSecurityUserSelectedObjectsList),PostDataItem(panelSecurityUserSelectedObjectsList,);AcceptDataChanges(=,panelSecurityUserSelectedObjectsList));IF(HasDataChanges(,panelSecurityUserSelectedGroupList),PostDataItem(panelSecurityUserSelectedGroupList,);AcceptDataChanges(=,panelSecurityUserSelectedGroupList));IF(HasDataChanges(,panelSecurityUserSelectedRolesList),PostDataItem(panelSecurityUserSelectedRolesList,);AcceptDataChanges(=,panelSecurityUserSelectedRolesList));IF(HasDataChanges(,panelSecurityUserFeaturesSelectedByUser),PostDataItem(panelSecurityUserFeaturesSelectedByUser,);AcceptDataChanges(=,panelSecurityUserFeaturesSelectedByUser));IF(HasDataChanges(,panelSecurityUserListApplicationsByUser),PostDataItem(panelSecurityUserListApplicationsByUser,);AcceptDataChanges(=,panelSecurityUserListApplicationsByUser);ReloadData(panelSecurityUserSelectedApplications);ReloadData(panelSecurityUserListAllAvailableGroups));IF(HasDataChanges(,panelSecurityUserServices),PostDataItem(panelSecurityUserServices,);AcceptDataChanges(=,panelSecurityUserServices));CloseWindow(windows)
@@ -796,8 +747,6 @@ UpdateDataField(panelDefinitionClipboard,Icon,pp ppWorkflowProcess);ReloadData(p
 UpdateDataField(panelDefinitionClipboard,Icon,pp ppWorkflowProcess);UpdateDataField(panelDefinitionClipboard,CreateEdit,{{text.EditHoliday}});ShowWindow(~/app/workflow/holiday/panelHolidayEdit.html,panel)
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\workflow\holiday\panelHolidayEdit.html
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\app\workflow\transferownership\panelTransferOwnership.html
-SELECT PA.ProcessName, PA.ProcessCode FROM panelTransferOwnershipGetInstancesAvailable AS PA INNER JOIN panelTransferOwnershipProcessSelectedResume AS PS ON PA.ProcessCode = PS
-SELECT IA.InstanceName FROM panelTransferOwnershipGetInstancesAvailable AS IA INNER JOIN panelTransferOwnershipInstancesSelectedResume AS IS ON IA.InstanceCode = IS
 UpdateDataField(panelDefinitionClipboard,Icon,pp ppRainbowUserTransfer)
 UpdateItemField({{process.Selected}},true);AddDataItem(panelTransferOwnershipProcessSelected,{{process}});AddDataItem(panelTransferOwnershipProcessSelectedResume,{{process.ProcessCode}});UpdateData(panelTransferOwnershipDataProcess,{{process}});Execute({{panelTransferOwnershipFunctionSelectAllInstances}});Notify(panelTransferOwnershipGetInstancesAvailable);Notify(panelTransferOwnershipInstancesSelected)
 ExecuteDataItem(UpdateDataField(panelTransferOwnershipDataAddInstanceListResume,code,{{instance.InstanceCode}});UpdateDataField(panelTransferOwnershipDataAddInstanceListResume,name,{{instance.InstanceName}});UpdateDataField(panelTransferOwnershipDataAddInstanceListResume,hierarchy,{{panelTransferOwnershipDataProcess.ProcessCode}});AddDataItem(panelTransferOwnershipInstancesSelectedResume,{{panelTransferOwnershipDataAddInstanceListResume}});AddDataItem(panelTransferOwnershipInstancesSelected,{{instance.InstanceCode}}),instance in panelTransferOwnershipDataProcess.WorkflowTransferOwnershipInstances,!ContainsDataItem({{panelTransferOwnershipInstancesSelectedResume.code}},{{instance.InstanceCode}}),true)
@@ -817,31 +766,15 @@ IF({{panelTransferOwnershipDataSave.UpdateResponsibleDataTable}}=,UpdateDataFiel
 {{dcFeaturesCardsGroupProperties.featuresselected}}
 ExecuteDataItem(IF(!{{featureupdate.IsReadOnly}},{{dcFeaturesCardsGroupAddCodeList}}),featureupdate in dcFeaturesCardsGroupListSelectedFeaturesListAdmin,!ContainsDataItem({{dcFeaturesCardsGroupSelectedFeatureCode}},{{featureupdate.Code}}),true);Notify(dcFeaturesCardsGroupSelectedFeatureCode)
 ExecuteDataItem({{dcFeaturesCardsGroupRemoveCodeList}},featureupdate in dcFeaturesCardsGroupListSelectedFeaturesListAdmin,true,true);Notify(dcFeaturesCardsGroupSelectedFeatureCode)
-SELECT SF AS Selected, LF.Code, LF.Name, LF.GroupNameListMessage, LF.IsReadOnly FROM dcFeaturesCardsGroupAvailableFeatures AS LF LEFT JOIN dcFeaturesCardsGroupSelectedFeatureCode AS SF ON LF.Code = SF WHERE LF.ProfileCode = A
-SELECT LF.Code FROM dcFeaturesCardsGroupAvailableFeatures AS LF INNER JOIN dcFeaturesCardsGroupSelectedFeatureCode AS SF ON LF.Code = SF WHERE LF.ProfileCode = A
-SELECT SF AS Selected, LF.Code, LF.Name, SF.GroupNameListMessage, SF.IsReadOnly FROM dcFeaturesCardsGroupAvailableFeatures AS LF LEFT JOIN dcFeaturesCardsGroupSelectedFeatureCode AS SF ON LF.Code = SF.Code WHERE LF.ProfileCode = A
-SELECT UFG.Code FROM dcFeaturesCardsGroupUserFeaturesGroupsSelectedAdmin AS UFG WHERE UFG.Selected = true
 IF({{dcFeaturesCardsGroupProperties.disableselection}},ExecuteDataItem(IF({{featureGroupSelected.GroupNameListMessage.length}}>0,UpdateItemField({{featureGroupSelected.Selected}},true,false)),featureGroupSelected in dcFeaturesCardsGroupUserFeaturesGroupsSelectedAdmin,true,true);UpdateData(dcFeaturesCardsGroupListSelectedFeaturesListAdmin,{{dcFeaturesCardsGroupUserFeaturesGroupsSelectedAdmin}});UpdateData(dcFeaturesCardsGroupCountSelectedAdmin,{{dcFeaturesCardsGroupCountUserFeaturesGroupsSelectedAdmin}});Execute({{dcFeaturesCardsGroupUpdateAdminAllSelected}}))
 ExecuteDataItem(IF(!{{featureupdate.IsReadOnly}},{{dcFeaturesCardsGroupAddCodeList}}),featureupdate in dcFeaturesCardsGroupListSelectedFeaturesListManager,!ContainsDataItem({{dcFeaturesCardsGroupSelectedFeatureCode}},{{featureupdate.Code}}),true);Notify(dcFeaturesCardsGroupSelectedFeatureCode)
 ExecuteDataItem({{dcFeaturesCardsGroupRemoveCodeList}},featureupdate in dcFeaturesCardsGroupListSelectedFeaturesListManager,true,true);Notify(dcFeaturesCardsGroupSelectedFeatureCode)
-SELECT SF AS Selected, LF.Code, LF.Name, LF.GroupNameListMessage, LF.IsReadOnly FROM dcFeaturesCardsGroupAvailableFeatures AS LF LEFT JOIN dcFeaturesCardsGroupSelectedFeatureCode AS SF ON LF.Code = SF WHERE LF.ProfileCode = G
-SELECT LF.Code FROM dcFeaturesCardsGroupAvailableFeatures AS LF INNER JOIN dcFeaturesCardsGroupSelectedFeatureCode AS SF ON LF.Code = SF WHERE LF.ProfileCode = G
-SELECT SF AS Selected, LF.Code, LF.Name, SF.GroupNameListMessage, SF.IsReadOnly FROM dcFeaturesCardsGroupAvailableFeatures AS LF LEFT JOIN dcFeaturesCardsGroupSelectedFeatureCode AS SF ON LF.Code = SF.Code WHERE LF.ProfileCode = G
-SELECT UFG.Code FROM dcFeaturesCardsGroupUserFeaturesGroupsSelectedManager AS UFG WHERE UFG.Selected = true
 IF({{dcFeaturesCardsGroupProperties.disableselection}},ExecuteDataItem(IF({{featureGroupSelected.GroupNameListMessage.length}}>0,UpdateItemField({{featureGroupSelected.Selected}},true,false)),featureGroupSelected in dcFeaturesCardsGroupUserFeaturesGroupsSelectedManager,true,true);UpdateData(dcFeaturesCardsGroupListSelectedFeaturesListManager,{{dcFeaturesCardsGroupUserFeaturesGroupsSelectedManager}});UpdateData(dcFeaturesCardsGroupCountSelectedManager,{{dcFeaturesCardsGroupCountUserFeaturesGroupsSelectedManager}});Execute({{dcFeaturesCardsGroupUpdateManagerAllSelected}}))
 ExecuteDataItem(IF(!{{featureupdate.IsReadOnly}},{{dcFeaturesCardsGroupAddCodeList}}),featureupdate in dcFeaturesCardsGroupListSelectedFeaturesListAnalyst,!ContainsDataItem({{dcFeaturesCardsGroupSelectedFeatureCode}},{{featureupdate.Code}}),true);Notify(dcFeaturesCardsGroupSelectedFeatureCode)
 ExecuteDataItem({{dcFeaturesCardsGroupRemoveCodeList}},featureupdate in dcFeaturesCardsGroupListSelectedFeaturesListAnalyst,true,true);Notify(dcFeaturesCardsGroupSelectedFeatureCode)
-SELECT SF AS Selected, LF.Code, LF.Name, LF.GroupNameListMessage, LF.IsReadOnly FROM dcFeaturesCardsGroupAvailableFeatures AS LF LEFT JOIN dcFeaturesCardsGroupSelectedFeatureCode AS SF ON LF.Code = SF WHERE LF.ProfileCode = N
-SELECT LF.Code FROM dcFeaturesCardsGroupAvailableFeatures AS LF INNER JOIN dcFeaturesCardsGroupSelectedFeatureCode AS SF ON LF.Code = SF WHERE LF.ProfileCode = N
-SELECT SF AS Selected, LF.Code, LF.Name, SF.GroupNameListMessage, SF.IsReadOnly FROM dcFeaturesCardsGroupAvailableFeatures AS LF LEFT JOIN dcFeaturesCardsGroupSelectedFeatureCode AS SF ON LF.Code = SF.Code WHERE LF.ProfileCode = N
-SELECT UFG.Code FROM dcFeaturesCardsGroupUserFeaturesGroupsSelectedAnalyst AS UFG WHERE UFG.Selected = true
 IF({{dcFeaturesCardsGroupProperties.disableselection}},ExecuteDataItem(IF({{featureGroupSelected.GroupNameListMessage.length}}>0,UpdateItemField({{featureGroupSelected.Selected}},true,false)),featureGroupSelected in dcFeaturesCardsGroupUserFeaturesGroupsSelectedAnalyst,true,true);UpdateData(dcFeaturesCardsGroupListSelectedFeaturesListAnalyst,{{dcFeaturesCardsGroupUserFeaturesGroupsSelectedAnalyst}});UpdateData(dcFeaturesCardsGroupCountSelectedAnalyst,{{dcFeaturesCardsGroupCountUserFeaturesGroupsSelectedAnalyst}});Execute({{dcFeaturesCardsGroupUpdateAnalystAllSelected}}))
 ExecuteDataItem(IF(!{{featureupdate.IsReadOnly}},{{dcFeaturesCardsGroupAddCodeList}}),featureupdate in dcFeaturesCardsGroupListSelectedFeaturesListPlanner,!ContainsDataItem({{dcFeaturesCardsGroupSelectedFeatureCode}},{{featureupdate.Code}}),true);Notify(dcFeaturesCardsGroupSelectedFeatureCode)
 ExecuteDataItem({{dcFeaturesCardsGroupRemoveCodeList}},featureupdate in dcFeaturesCardsGroupListSelectedFeaturesListPlanner,true,true);Notify(dcFeaturesCardsGroupSelectedFeatureCode)
-SELECT SF AS Selected, LF.Code, LF.Name, LF.GroupNameListMessage, LF.IsReadOnly FROM dcFeaturesCardsGroupAvailableFeatures AS LF LEFT JOIN dcFeaturesCardsGroupSelectedFeatureCode AS SF ON LF.Code = SF WHERE LF.ProfileCode = P
-SELECT LF.Code FROM dcFeaturesCardsGroupAvailableFeatures AS LF INNER JOIN dcFeaturesCardsGroupSelectedFeatureCode AS SF ON LF.Code = SF WHERE LF.ProfileCode = P
-SELECT SF AS Selected, LF.Code, LF.Name, SF.GroupNameListMessage, SF.IsReadOnly FROM dcFeaturesCardsGroupAvailableFeatures AS LF LEFT JOIN dcFeaturesCardsGroupSelectedFeatureCode AS SF ON LF.Code = SF.Code WHERE LF.ProfileCode = P
-SELECT UFG.Code FROM dcFeaturesCardsGroupUserFeaturesGroupsSelectedPlanner AS UFG WHERE UFG.Selected = true
 IF({{dcFeaturesCardsGroupProperties.disableselection}},ExecuteDataItem(IF({{featureGroupSelected.GroupNameListMessage.length}}>0,UpdateItemField({{featureGroupSelected.Selected}},true,false)),featureGroupSelected in dcFeaturesCardsGroupUserFeaturesGroupsSelectedPlanner,true,true);UpdateData(dcFeaturesCardsGroupListSelectedFeaturesListPlanner,{{dcFeaturesCardsGroupUserFeaturesGroupsSelectedPlanner}});UpdateData(dcFeaturesCardsGroupCountSelectedPlanner,{{dcFeaturesCardsGroupCountUserFeaturesGroupsSelectedPlanner}});Execute({{dcFeaturesCardsGroupUpdatePlannerAllSelected}}))
 IF(!{{featureupdate.GroupNameListMessage}},AddDataItem(dcFeaturesCardsGroupSelectedFeatureCode,{{featureupdate.Code}},false))
 IF(!{{featureupdate.GroupNameListMessage}},RemoveDataItem(dcFeaturesCardsGroupSelectedFeatureCode,{{featureupdate.Code}},false))
@@ -855,20 +788,12 @@ Execute({{dcFeaturesCardsGroupUserFeaturesGroupsSelectedAdminFunc}});Execute({{d
 {{dcFeaturesCardsUserProperties.featuresavailable}}
 ExecuteDataItem(IF(!{{featureupdate.IsReadOnly}},{{dcFeaturesCardsUserAddCodeList}}),featureupdate in dcFeaturesCardsUserListSelectedFeaturesListAdmin,!ContainsDataItem({{dcFeaturesCardsUserSelectedFeatureCode}},{{featureupdate.Code}}),true);Notify(dcFeaturesCardsUserSelectedFeatureCode)
 ExecuteDataItem({{dcFeaturesCardsUserRemoveCodeList}},featureupdate in dcFeaturesCardsUserListSelectedFeaturesListAdmin,true,true);Notify(dcFeaturesCardsUserSelectedFeatureCode)
-SELECT SF AS Selected, LF.Code, LF.Name, LF.GroupNameListMessage, LF.IsReadOnly FROM dcFeaturesCardsUserAvailableFeatures AS LF LEFT JOIN dcFeaturesCardsUserSelectedFeatureCode AS SF ON LF.Code = SF WHERE LF.ProfileCode = A
-SELECT LF.Code FROM dcFeaturesCardsUserAvailableFeatures AS LF INNER JOIN dcFeaturesCardsUserSelectedFeatureCode AS SF ON LF.Code = SF WHERE LF.ProfileCode = A
 ExecuteDataItem(IF(!{{featureupdate.IsReadOnly}},{{dcFeaturesCardsUserAddCodeList}}),featureupdate in dcFeaturesCardsUserListSelectedFeaturesListManager,!ContainsDataItem({{dcFeaturesCardsUserSelectedFeatureCode}},{{featureupdate.Code}}),true);Notify(dcFeaturesCardsUserSelectedFeatureCode)
 ExecuteDataItem({{dcFeaturesCardsUserRemoveCodeList}},featureupdate in dcFeaturesCardsUserListSelectedFeaturesListManager,true,true);Notify(dcFeaturesCardsUserSelectedFeatureCode)
-SELECT SF AS Selected, LF.Code, LF.Name, LF.GroupNameListMessage, LF.IsReadOnly FROM dcFeaturesCardsUserAvailableFeatures AS LF LEFT JOIN dcFeaturesCardsUserSelectedFeatureCode AS SF ON LF.Code = SF WHERE LF.ProfileCode = G
-SELECT LF.Code FROM dcFeaturesCardsUserAvailableFeatures AS LF INNER JOIN dcFeaturesCardsUserSelectedFeatureCode AS SF ON LF.Code = SF WHERE LF.ProfileCode = G
 ExecuteDataItem(IF(!{{featureupdate.IsReadOnly}},{{dcFeaturesCardsUserAddCodeList}}),featureupdate in dcFeaturesCardsUserListSelectedFeaturesListAnalyst,!ContainsDataItem({{dcFeaturesCardsUserSelectedFeatureCode}},{{featureupdate.Code}}),true);Notify(dcFeaturesCardsUserSelectedFeatureCode)
 ExecuteDataItem({{dcFeaturesCardsUserRemoveCodeList}},featureupdate in dcFeaturesCardsUserListSelectedFeaturesListAnalyst,true,true);Notify(dcFeaturesCardsUserSelectedFeatureCode)
-SELECT SF AS Selected, LF.Code, LF.Name, LF.GroupNameListMessage, LF.IsReadOnly FROM dcFeaturesCardsUserAvailableFeatures AS LF LEFT JOIN dcFeaturesCardsUserSelectedFeatureCode AS SF ON LF.Code = SF WHERE LF.ProfileCode = N
-SELECT LF.Code FROM dcFeaturesCardsUserAvailableFeatures AS LF INNER JOIN dcFeaturesCardsUserSelectedFeatureCode AS SF ON LF.Code = SF WHERE LF.ProfileCode = N
 ExecuteDataItem(IF(!{{featureupdate.IsReadOnly}},{{dcFeaturesCardsUserAddCodeList}}),featureupdate in dcFeaturesCardsUserListSelectedFeaturesListPlanner,!ContainsDataItem({{dcFeaturesCardsUserSelectedFeatureCode}},{{featureupdate.Code}}),true);Notify(dcFeaturesCardsUserSelectedFeatureCode)
 ExecuteDataItem({{dcFeaturesCardsUserRemoveCodeList}},featureupdate in dcFeaturesCardsUserListSelectedFeaturesListPlanner,true,true);Notify(dcFeaturesCardsUserSelectedFeatureCode)
-SELECT SF AS Selected, LF.Code, LF.Name, LF.GroupNameListMessage, LF.IsReadOnly FROM dcFeaturesCardsUserAvailableFeatures AS LF LEFT JOIN dcFeaturesCardsUserSelectedFeatureCode AS SF ON LF.Code = SF WHERE LF.ProfileCode = P
-SELECT LF.Code FROM dcFeaturesCardsUserAvailableFeatures AS LF INNER JOIN dcFeaturesCardsUserSelectedFeatureCode AS SF ON LF.Code = SF WHERE LF.ProfileCode = P
 AddDataItem(dcFeaturesCardsUserSelectedFeatureCode,{{featureupdate.Code}},false)
 RemoveDataItem(dcFeaturesCardsUserSelectedFeatureCode,{{featureupdate.Code}},false)
 IF({{dcFeaturesCardsUserCountSelectedAdmin.length}}={{dcFeaturesCardsUserListSelectedFeaturesListAdmin.length}},UpdateDataField(dcFeaturesCardsUserListAllSelectedFlags,adminallselected,true),UpdateDataField(dcFeaturesCardsUserListAllSelectedFlags,adminallselected,false))
@@ -876,7 +801,6 @@ IF({{dcFeaturesCardsUserCountSelectedManager.length}}={{dcFeaturesCardsUserListS
 IF({{dcFeaturesCardsUserCountSelectedAnalyst.length}}={{dcFeaturesCardsUserListSelectedFeaturesListAnalyst.length}},UpdateDataField(dcFeaturesCardsUserListAllSelectedFlags,analystallselected,true),UpdateDataField(dcFeaturesCardsUserListAllSelectedFlags,analystallselected,false))
 IF({{dcFeaturesCardsUserCountSelectedPlanner.length}}={{dcFeaturesCardsUserListSelectedFeaturesListPlanner.length}},UpdateDataField(dcFeaturesCardsUserListAllSelectedFlags,plannerallselected,true),UpdateDataField(dcFeaturesCardsUserListAllSelectedFlags,plannerallselected,false))
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\components\grouplistbox\grouplistbox.html
-SELECT LG.Code, LG.Name FROM dcGroupListViewAllGroups AS LG INNER JOIN dcGroupListViewSelectedGroupsCode AS SG ON LG.Code = SG
 UpdateDataField(panelDefinitionClipboard,Icon,{{dcProperties.icon}});UpdateDataField(panelDefinitionClipboard,Title,{{dcProperties.title}});UpdateDataField(panelDefinitionClipboard,Subtitle,{{dcProperties.subtitle}});UpdateDataField(panelDefinitionClipboard,Listname,{{dcProperties.listname}});UpdateDataField(panelObjectClipboard,codeGroupsSelectedGroupClipboard,CreateReference({{dcGroupListViewSelectedGroupsCode}}));UpdateDataField(panelObjectClipboard,allGroupsGroupClipboard,CreateReference({{dcGroupListViewAllGroups}}));ShowWindow(~/app/components/grouplistview/panelGroupNewEdit.html,panel)
 UpdateDataField(panelDefinitionClipboard,Icon,{{dcProperties.icon}});UpdateDataField(panelDefinitionClipboard,Title,{{dcProperties.title}});UpdateDataField(panelDefinitionClipboard,Subtitle,{{dcProperties.subtitle}});UpdateDataField(panelDefinitionClipboard,Listname,{{dcProperties.listname}});UpdateDataField(panelObjectClipboard,codeGroupsSelectedGroupClipboard,CreateReference({{dcGroupListViewSelectedGroupsCode}}));UpdateDataField(panelObjectClipboard,allGroupsGroupClipboard,CreateReference({{dcGroupListViewAllGroups}}));ShowWindow(~/app/components/grouplistview/panelGroupView.html,panel)
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\components\listbox\listbox.html
@@ -884,7 +808,6 @@ UpdateDataField(panelDefinitionClipboard,Icon,{{dcListBoxParameters.icon}});Upda
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\components\listtree\listtree.html
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\components\membergrid\membergrid.html
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\components\memberselection\memberselection.html
-SELECT M.MemberId FROM {{dcMemberSelectionFormFilter.Members}} AS M
 IF({{dcProperties.singlemember}},UpdateDataField(panelMemberAggregationType,Type,2,false),);UpdateDataField(panelMemberAgreggationSelected,Value,{{panelMemberSelectionAgreggationTypeList.[0].Value}});
 ExecuteDataItem(UpdateItemField({{member.Selected}},true),member in dcMemberSelectionAllMembers,ContainsDataItem({{dcMemberSelectionFormFilterMemberIdSelection}},{{member.MemberId}}),true,member in member.Children);Execute({{panelMemberSelectionOnChangeModelAction}})
 UpdateDataFieldLookup(panelMemberSelectionMemberFlatList,MemberId,{{listTreeItem.MemberId}},Selected,false);UpdateItemField({{listTreeItem.Selected}},false);RemoveDataItemLookup({{dcMemberSelectionFormFilter.Members}},MemberId,{{listTreeItem.MemberId}});RemoveDataItem(panelMemberSelectedMemberId,{{listTreeItem.MemberId}});Notify(panelMemberSelectionMemberList)
@@ -903,13 +826,9 @@ UpdateItemField({{memberselected.Selected}},false);UpdateDataFieldLookup(panelMe
 IF({{selected}},RemoveDataItem({{dcMemberSelectionFormFilter.Members}},{{selected}});RemoveDataItem(panelMemberSelectedMemberId,{{selected.MemberId}});IF(!ContainsDataItem({{panelMemberSelectedMemberId}},{{selected.MemberId}}),UpdateDataFieldLookup(panelMemberSelectionMemberFlatList,MemberId,{{selected.MemberId}},Selected,false);UpdateData(panelMemberSelectionMemberList,{{dcMemberSelectionAllMembers}}));Notify(dcMemberSelectionFormFilter))
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\components\multitab\multitab.html
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\components\objectlistbox\objectlistbox.html
-SELECT LO.Code, LO.Name, LO.TypeImageClass FROM dcObjectListViewAllObjects AS LO INNER JOIN dcObjectListViewSelectedObjectsCode AS SO ON LO.Code = SO
 UpdateDataField(panelDefinitionClipboard,Icon,{{dcProperties.icon}});UpdateDataField(panelDefinitionClipboard,Title,{{dcProperties.title}});UpdateDataField(panelDefinitionClipboard,Subtitle,{{dcProperties.subtitle}});UpdateDataField(panelDefinitionClipboard,Listname,{{dcProperties.listname}});UpdateDataField(panelObjectClipboard,codeObjectsSelectedObjectClipboard,CreateReference({{dcObjectListViewSelectedObjectsCode}}));UpdateDataField(panelObjectClipboard,allObjectsClipboard,CreateReference({{dcObjectListViewAllObjects}}));ShowWindow(~/app/components/objectlistbox/panelObjectNewEdit.html,panel)
 UpdateDataField(panelDefinitionClipboard,Icon,{{dcProperties.icon}});UpdateDataField(panelDefinitionClipboard,Title,{{dcProperties.title}});UpdateDataField(panelDefinitionClipboard,Subtitle,{{dcProperties.subtitle}});UpdateDataField(panelDefinitionClipboard,Listname,{{dcProperties.listname}});UpdateDataField(panelObjectClipboard,codeObjectsSelectedObjectClipboard,CreateReference({{dcObjectListViewSelectedObjectsCode}}));ShowWindow(~/app/components/objectlistbox/panelObjectView.html,panel)
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\components\objectpermissionlistbox\objectpermissionlistbox.html
-SELECT Code, Name, TypeImageClass, Path FROM dcObjectPermissionListBoxObjectsSource AS O ORDER BY Name
-SELECT L.Code, L.Name, L.TypeImageClass, S.PermissionType FROM dcObjectPermissionListBoxObjects AS L INNER JOIN dcObjectPermissionListBoxSelected AS S ON L.Code = S.ObjectCode
-SELECT L.Code, L.Name, L.TypeImageClass, P.Value AS PermissionText FROM dcObjectPermissionListBoxSelectedObjects AS L INNER JOIN dcObjectPermissionListBoxPermissionTypes AS P ON L.PermissionType = P.Key
 UpdateDataField(panelDefinitionClipboard,Icon,{{dcProperties.icon}});UpdateDataField(panelDefinitionClipboard,Title,{{dcProperties.title}});UpdateDataField(panelDefinitionClipboard,Subtitle,{{dcProperties.subtitle}});UpdateDataField(panelDefinitionClipboard,Listname,{{dcProperties.listname}});UpdateDataField(panelObjectClipboard,codeObjectsSelectedObjectClipboard,CreateReference({{dcObjectPermissionListBoxSelected}}));UpdateDataField(panelObjectClipboard,allObjectsClipboard,CreateReference({{dcObjectPermissionListBoxObjects}}));UpdateDataField(panelObjectClipboard,allPermissionsType,CreateReference({{dcObjectPermissionListBoxPermissionTypes}}));ShowWindow(~/app/components/objectpermissionlistbox/panelObjectPermissionListBoxNewEdit.html,panel)
 UpdateDataField(panelDefinitionClipboard,Icon,{{dcProperties.icon}});UpdateDataField(panelDefinitionClipboard,Title,{{dcProperties.title}});UpdateDataField(panelDefinitionClipboard,Subtitle,{{dcProperties.subtitle}});UpdateDataField(panelDefinitionClipboard,Listname,{{dcProperties.listname}});UpdateDataField(panelObjectClipboard,allObjectsSelectedClipboard,CreateReference({{dcObjectPermissionListBoxSelectedObjectsPermission}}));ShowWindow(~/app/components/objectpermissionlistbox/panelObjectPermissionListBoxView.html,panel)
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\components\powerbiembedded\powerbiembedded.html
@@ -920,8 +839,6 @@ ShowWindow(Loading);UpdateData(profitabilityRefresh,{{profitability}});PostDataI
 IF({{profitability.Pages.length}}=0,UpdateDataField(profitabilityChangesDataScreen,blockrange,true);UpdateDataField(profitabilityChangesDataScreen,blockfilters,true))
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\components\radiobuttongrouptab\radiobuttongrouptab.html
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\components\rolelistbox\rolelistbox.html
-SELECT A.Code, A.Name, A.GroupName FROM dcRoleListBoxAvailableRoles AS A INNER JOIN dcRoleListBoxSelectedRolesCode AS S ON A.Code = S
-SELECT Count(A.Code) AS Count FROM dcRoleListBoxAvailableRoles AS A INNER JOIN dcRoleListBoxSelectedRolesCode AS S ON A.Code = S
 UpdateDataField(panelDefinitionClipboard,Icon,{{dcProperties.icon}});UpdateDataField(panelDefinitionClipboard,Title,{{dcProperties.title}});UpdateDataField(panelDefinitionClipboard,Subtitle,{{dcProperties.subtitle}});UpdateDataField(panelDefinitionClipboard,Listname,{{dcProperties.listname}});UpdateDataField(panelObjectClipboard,codeRolesSelectedRoleClipboard,CreateReference({{dcRoleListBoxSelectedRolesCode}}));UpdateDataField(panelObjectClipboard,codeRolesAvailablesRoleClipboard,{{dcRoleListBoxAvailableRoles}});ShowWindow(~/app/components/rolelistbox/panelRoleNewEdit.html,panel)
 UpdateDataField(panelDefinitionClipboard,Icon,{{dcProperties.icon}});UpdateDataField(panelDefinitionClipboard,Title,{{dcProperties.title}});UpdateDataField(panelDefinitionClipboard,Subtitle,{{dcProperties.subtitle}});UpdateDataField(panelDefinitionClipboard,Listname,{{dcProperties.listname}});UpdateDataField(panelObjectClipboard,codeRolesSelectedRoleClipboard,CreateReference({{dcRoleListBoxSelectedRolesCode}}));UpdateDataField(panelObjectClipboard,codeRolesAvailablesRoleClipboard,{{dcRoleListBoxAvailableRoles}});ShowWindow(~/app/components/rolelistbox/panelRoleView.html,panel)
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\components\sdk\sdk.html
@@ -937,7 +854,6 @@ IF({{panelDefinitionClipboardObject.FunctionKey}}!=,UpdateDataField(textBoxSmart
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\components\uploader\uploader.html
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\components\uploaderimage\uploaderimage.html
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\components\userlistbox\userlistbox.html
-SELECT LU.UserCode, LU.FullName, LU.Email FROM dcUserListViewAllUsers AS LU INNER JOIN dcUserListViewSelectedUsersCode AS SU ON LU.UserCode = SU
 UpdateDataField(panelDefinitionClipboard,Icon,{{dcProperties.icon}});UpdateDataField(panelDefinitionClipboard,Title,{{dcProperties.title}});UpdateDataField(panelDefinitionClipboard,Subtitle,{{dcProperties.subtitle}});UpdateDataField(panelDefinitionClipboard,Listname,{{dcProperties.listname}});UpdateDataField(panelObjectClipboard,codeUsersSelectedUserClipboard,CreateReference({{dcUserListViewSelectedUsersCode}}));UpdateDataField(panelObjectClipboard,users,CreateReference({{dcUserListViewAllUsers}}));ShowWindow(~/app/components/userlistview/panelUserNewEdit.html,panel)
 UpdateDataField(panelDefinitionClipboard,Icon,{{dcProperties.icon}});UpdateDataField(panelDefinitionClipboard,Title,{{dcProperties.title}});UpdateDataField(panelDefinitionClipboard,Subtitle,{{dcProperties.subtitle}});UpdateDataField(panelDefinitionClipboard,Listname,{{dcProperties.listname}});UpdateDataField(panelObjectClipboard,codeUsersSelectedUserClipboard,CreateReference({{dcUserListViewSelectedUsersCode}}));UpdateDataField(panelObjectClipboard,users,CreateReference({{dcUserListViewAllUsers}}));ShowWindow(~/app/components/userlistview/panelUserView.html,panel)
 \\ powerplanning\src\WebSPA\Web\WebSPA\wwwroot\components\wizard\wizard.html

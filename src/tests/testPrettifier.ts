@@ -31,6 +31,5 @@ for await (line of file.readLines())
         console.error(error);
         break;
     }
-    console.log(line)
 }
 
