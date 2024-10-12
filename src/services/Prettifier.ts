@@ -19,7 +19,7 @@ enum PrettifierStep
 
 export class Prettifier 
 {
-    private readonly VARIABLE = new Set("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.");
+    private readonly VARIABLE = new Set("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.:");
 
     private input : string = "";
     private parserPosition: number = 0;
