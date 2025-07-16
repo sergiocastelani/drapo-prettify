@@ -12,13 +12,9 @@ A React-based web application for formatting and compressing Drapo code. This to
 
 ## What is Drapo?
 
-Drapo appears to be a domain-specific language used in business application frameworks. It includes operations like:
-- `UpdateSector()` - Updates UI sectors
-- `ShowWindow()` - Displays windows/dialogs  
-- `IF()` - Conditional statements
-- `Execute()` - Function execution
-- `PostDataItem()` - Data posting operations
-- And many more business logic operations
+Drapo is a Typescript framework used in business application. 
+
+Check https://github.com/spadrapo/drapo
 
 ## Installation
 
@@ -64,9 +60,11 @@ IF({{condition}},Execute(action1);ShowWindow(window1),Execute(action2);UpdateSec
 **Output (prettified):**
 ```
 IF(
-    {{condition}},
+    {{condition}}
+    ,
     Execute(action1);
-    ShowWindow(window1),
+    ShowWindow(window1)
+    ,
     Execute(action2);
     UpdateSector(sector1)
 )
