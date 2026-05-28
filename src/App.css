@@ -66,15 +66,46 @@ button {
 
 .tabsList {
   display: flex;
+  align-items: center;
   gap: 10px;
   overflow-x: auto;
 }
 
+.tabItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-right: 5px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background-color: buttonface;
+}
+
+.tabItemActive {
+  border-color: antiquewhite;
+}
+
 .tabButton,
+.tabCloseButton,
 .tabAddButton {
   margin: 0;
   font-size: medium;
   white-space: nowrap;
+}
+
+.tabButton,
+.tabCloseButton {
+  border: none;
+  background: transparent;
+}
+
+.tabButton {
+  padding: 5px 0 5px 5px;
+}
+
+.tabCloseButton {
+  padding: 5px;
+  line-height: 1;
 }
 
 .tabButtonActive {

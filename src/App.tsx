@@ -58,6 +58,30 @@ function App()
     setNextTabId((currentId) => currentId + 1);
   }
 
+  function closeTab(tabId: number)
+  {
+    const closingTabIndex = tabs.findIndex((tab) => tab.id === tabId);
+    if (closingTabIndex < 0)
+      return;
+
+    const remainingTabs = tabs.filter((tab) => tab.id !== tabId);
+    if (remainingTabs.length === 0)
+    {
+      const replacementTab = createWorkspaceTab(nextTabId);
+      setTabs([replacementTab]);
+      setActiveTabId(replacementTab.id);
+      setNextTabId((currentId) => currentId + 1);
+      return;
+    }
+
+    setTabs(remainingTabs);
+    if (activeTabId !== tabId)
+      return;
+
+    const nextActiveTab = remainingTabs[Math.min(closingTabIndex, remainingTabs.length - 1)];
+    setActiveTabId(nextActiveTab.id);
+  }
+
   function renameTab(tabId: number)
   {
     const currentTab = tabs.find((tab) => tab.id === tabId);
@@ -96,19 +120,35 @@ function App()
       <div className="tabsBar">
         <div className="tabsList">
           {tabs.map((tab) => (
-            <button
+            <div
               key={tab.id}
-              type="button"
-              className={`tabButton${tab.id === activeTab.id ? ' tabButtonActive' : ''}`}
-              onClick={() => setActiveTabId(tab.id)}
-              onContextMenu={(event) => {
-                event.preventDefault();
-                renameTab(tab.id);
-              }}
-              title="Right-click to rename"
+              className={`tabItem${tab.id === activeTab.id ? ' tabItemActive' : ''}`}
             >
-              {tab.title}
-            </button>
+              <button
+                type="button"
+                className={`tabButton${tab.id === activeTab.id ? ' tabButtonActive' : ''}`}
+                onClick={() => setActiveTabId(tab.id)}
+                onContextMenu={(event) => {
+                  event.preventDefault();
+                  renameTab(tab.id);
+                }}
+                title="Right-click to rename"
+              >
+                {tab.title}
+              </button>
+              <button
+                type="button"
+                className="tabCloseButton"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  closeTab(tab.id);
+                }}
+                aria-label={`Close ${tab.title}`}
+                title={`Close ${tab.title}`}
+              >
+                ×
+              </button>
+            </div>
           ))}
         </div>
         <button type="button" className="tabAddButton" onClick={() => addTab()}>
