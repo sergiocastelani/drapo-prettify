@@ -53,6 +53,41 @@ button {
   width: 100%;
 }
 
+.originalCodeRow {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.originalCodeRow .originalCode {
+  flex: 1;
+  min-width: 0;
+}
+
+.originalCodeActions {
+  display: flex;
+  gap: 6px;
+}
+
+.iconButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  margin: 0;
+  padding: 0;
+}
+
+.iconButton svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .prettyCode {
   padding: 10px;
 }

@@ -115,6 +115,17 @@ function App()
     updateActiveTab((tab) => ({ ...tab, originalCode: compressedCode }));
   }
 
+  async function copyOriginalCodeToClipboard()
+  {
+    await navigator.clipboard.writeText(activeTab.originalCode);
+  }
+
+  async function pasteOriginalCodeFromClipboard()
+  {
+    const clipboardText = await navigator.clipboard.readText();
+    updateActiveTab((tab) => ({ ...tab, originalCode: clipboardText }));
+  }
+
   function addTab()
   {
     const newTab = createWorkspaceTab(nextTabId);
@@ -296,6 +307,7 @@ function App()
 
       <div className="workspace">
         <h1>Original Drapo Code</h1>
+      <div className="originalCodeRow">
         <input
           type="text"
           name="originalCode"
@@ -303,10 +315,38 @@ function App()
           value={activeTab.originalCode}
           onChange={(event) => updateActiveTab((tab) => ({ ...tab, originalCode: event.target.value }))}
         />
-        <div className="buttonsRow">
-          <button onClick={() => prettify()}>Prettify ⬇</button>
-          <button onClick={() => compress()}>Compress ⬆</button>
+        <div className="originalCodeActions">
+          <button
+            type="button"
+            className="iconButton"
+            onClick={() => void copyOriginalCodeToClipboard()}
+            aria-label="Copy original code"
+            title="Copy original code"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M9 9h11v11H9z" />
+              <path d="M4 4h11v3H7v8H4z" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            className="iconButton"
+            onClick={() => void pasteOriginalCodeFromClipboard()}
+            aria-label="Paste original code"
+            title="Paste original code"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M9 3h6l1 2h3v16H5V5h3z" />
+              <path d="M12 8v7" />
+              <path d="M9.5 12.5 12 15l2.5-2.5" />
+            </svg>
+          </button>
         </div>
+      </div>
+      <div className="buttonsRow">
+        <button onClick={() => prettify()}>Prettify ⬇</button>
+        <button onClick={() => compress()}>Compress ⬆</button>
+      </div>
 
         <h1>Prettified</h1>
         <div className="editorPanel">
