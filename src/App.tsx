@@ -5,24 +5,57 @@ import { useEffect, useState } from 'react';
 import './App.css'
 import './assets/custom_highlights.css'
 
+type WorkspaceTab = {
+  id: number;
+  title: string;
+  originalCode: string;
+  prettyCode: string;
+};
+
+function createWorkspaceTab(id: number): WorkspaceTab
+{
+  return {
+    id,
+    title: `Tab ${id}`,
+    originalCode: '',
+    prettyCode: '',
+  };
+}
+
 function App()
 {
-  const [code, setCode] = useState("");
+  const [tabs, setTabs] = useState<WorkspaceTab[]>(() => [createWorkspaceTab(1)]);
+  const [activeTabId, setActiveTabId] = useState(1);
+  const [nextTabId, setNextTabId] = useState(2);
+
+  const activeTab = tabs.find((tab) => tab.id === activeTabId) ?? tabs[0];
+
+  function updateActiveTab(update: (tab: WorkspaceTab) => WorkspaceTab)
+  {
+    setTabs((currentTabs) =>
+      currentTabs.map((tab) => tab.id === activeTabId ? update(tab) : tab)
+    );
+  }
 
   function prettify()
   {
-    const compactCode = (document.getElementsByName("originalCode")[0] as HTMLInputElement)?.value ?? "";
     const prettifier = new Prettifier();
-    const result = prettifier.parse(compactCode);
-    setCode(result);
+    const result = prettifier.parse(activeTab.originalCode);
+    updateActiveTab((tab) => ({ ...tab, prettyCode: result }));
   }
   
   function compress()
   {
-    const compactCodeElement = document.getElementsByName("originalCode")[0] as HTMLInputElement;
-    if (!compactCodeElement)
-      return;
-    compactCodeElement.value = Compressor.compress(code);
+    const compressedCode = Compressor.compress(activeTab.prettyCode);
+    updateActiveTab((tab) => ({ ...tab, originalCode: compressedCode }));
+  }
+
+  function addTab()
+  {
+    const newTab = createWorkspaceTab(nextTabId);
+    setTabs((currentTabs) => [...currentTabs, newTab]);
+    setActiveTabId(newTab.id);
+    setNextTabId((currentId) => currentId + 1);
   }
   
   useEffect(() => {
@@ -40,30 +73,61 @@ function App()
         }
       }
       ,0);
-  }, [code]);
+  }, [activeTab.prettyCode]);
 
   return (
     <div id="App">
-      <h1>Original Drapo Code</h1>
-      <input type="text" name="originalCode" className='originalCode'/>
-      <div className="buttonsRow">
-        <button onClick={() => prettify()}>Prettify ⬇</button>
-        <button onClick={() => compress()}>Compress ⬆</button>
+      <div className="tabsBar">
+        <div className="tabsList">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`tabButton${tab.id === activeTab.id ? ' tabButtonActive' : ''}`}
+              onClick={() => setActiveTabId(tab.id)}
+            >
+              {tab.title}
+            </button>
+          ))}
+        </div>
+        <button type="button" className="tabAddButton" onClick={() => addTab()}>
+          + New Tab
+        </button>
       </div>
 
-      <h1>Prettified</h1>
-      <CodeEditor
-        data-color-mode="dark"
-        value={code}
-        language="js"
-        placeholder=""
-        onChange={(evn) => setCode(evn.target.value)}
-        padding={15}
-        style={{
-          fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
-          fontSize: "14px"
-        }}
-      />
+      <div className="workspace">
+        <h1>Original Drapo Code</h1>
+        <input
+          type="text"
+          name="originalCode"
+          className='originalCode'
+          value={activeTab.originalCode}
+          onChange={(event) => updateActiveTab((tab) => ({ ...tab, originalCode: event.target.value }))}
+        />
+        <div className="buttonsRow">
+          <button onClick={() => prettify()}>Prettify ⬇</button>
+          <button onClick={() => compress()}>Compress ⬆</button>
+        </div>
+
+        <h1>Prettified</h1>
+        <div className="editorPanel">
+          <CodeEditor
+            className="prettyCodeEditor"
+            data-color-mode="dark"
+            value={activeTab.prettyCode}
+            language="js"
+            placeholder=""
+            onChange={(event) => updateActiveTab((tab) => ({ ...tab, prettyCode: event.target.value }))}
+            padding={15}
+            style={{
+              fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
+              fontSize: "14px",
+              height: '100%',
+              minHeight: '100%',
+            }}
+          />
+        </div>
+      </div>
 
     </div>
   )
