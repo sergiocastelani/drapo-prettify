@@ -1,7 +1,7 @@
 import {Prettifier} from './services/Prettifier'
 import {Compressor} from './services/Compressor'
 import CodeEditor from '@uiw/react-textarea-code-editor';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type DragEvent } from 'react';
 import './App.css'
 import './assets/custom_highlights.css'
 
@@ -10,6 +10,11 @@ type WorkspaceTab = {
   title: string;
   originalCode: string;
   prettyCode: string;
+};
+
+type TabDropTarget = {
+  tabId: number;
+  placeAfter: boolean;
 };
 
 function getTabTitleBase(title: string): string
@@ -58,11 +63,35 @@ function createWorkspaceTab(id: number): WorkspaceTab
   };
 }
 
+function reorderTabs(tabs: WorkspaceTab[], draggedTabId: number, targetTabId: number, placeAfter: boolean): WorkspaceTab[]
+{
+  if (draggedTabId === targetTabId)
+    return tabs;
+
+  const draggedTab = tabs.find((tab) => tab.id === draggedTabId);
+  if (!draggedTab)
+    return tabs;
+
+  const remainingTabs = tabs.filter((tab) => tab.id !== draggedTabId);
+  const targetIndex = remainingTabs.findIndex((tab) => tab.id === targetTabId);
+  if (targetIndex < 0)
+    return tabs;
+
+  const insertionIndex = placeAfter ? targetIndex + 1 : targetIndex;
+  return [
+    ...remainingTabs.slice(0, insertionIndex),
+    draggedTab,
+    ...remainingTabs.slice(insertionIndex),
+  ];
+}
+
 function App()
 {
   const [tabs, setTabs] = useState<WorkspaceTab[]>(() => [createWorkspaceTab(1)]);
   const [activeTabId, setActiveTabId] = useState(1);
   const [nextTabId, setNextTabId] = useState(2);
+  const [draggedTabId, setDraggedTabId] = useState<number | null>(null);
+  const [dropTarget, setDropTarget] = useState<TabDropTarget | null>(null);
 
   const activeTab = tabs.find((tab) => tab.id === activeTabId) ?? tabs[0];
 
@@ -146,6 +175,52 @@ function App()
       currentTabs.map((tab) => tab.id === tabId ? { ...tab, title: nextTitle } : tab)
     );
   }
+
+  function getDropTarget(event: DragEvent<HTMLDivElement>, tabId: number): TabDropTarget
+  {
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const midpoint = bounds.left + bounds.width / 2;
+    return {
+      tabId,
+      placeAfter: event.clientX >= midpoint,
+    };
+  }
+
+  function handleTabDragStart(tabId: number)
+  {
+    setDraggedTabId(tabId);
+    setDropTarget(null);
+  }
+
+  function handleTabDragOver(event: DragEvent<HTMLDivElement>, tabId: number)
+  {
+    event.preventDefault();
+    if (draggedTabId === null || draggedTabId === tabId)
+    {
+      setDropTarget(null);
+      return;
+    }
+
+    setDropTarget(getDropTarget(event, tabId));
+  }
+
+  function handleTabDrop(event: DragEvent<HTMLDivElement>, tabId: number)
+  {
+    event.preventDefault();
+    if (draggedTabId === null)
+      return;
+
+    const nextDropTarget = getDropTarget(event, tabId);
+    setTabs((currentTabs) => reorderTabs(currentTabs, draggedTabId, nextDropTarget.tabId, nextDropTarget.placeAfter));
+    setDraggedTabId(null);
+    setDropTarget(null);
+  }
+
+  function clearDragState()
+  {
+    setDraggedTabId(null);
+    setDropTarget(null);
+  }
   
   useEffect(() => {
     setTimeout(() => {
@@ -167,21 +242,30 @@ function App()
   return (
     <div id="App">
       <div className="tabsBar">
-        <div className="tabsList">
-          {tabs.map((tab) => (
-            <div
-              key={tab.id}
-              className={`tabItem${tab.id === activeTab.id ? ' tabItemActive' : ''}`}
-            >
-              <button
-                type="button"
-                className={`tabButton${tab.id === activeTab.id ? ' tabButtonActive' : ''}`}
-                onClick={() => setActiveTabId(tab.id)}
+      <div
+        className="tabsList"
+        onDragOver={(event) => event.preventDefault()}
+        onDrop={() => clearDragState()}
+      >
+        {tabs.map((tab) => (
+          <div
+            key={tab.id}
+            className={`tabItem${tab.id === activeTab.id ? ' tabItemActive' : ''}${tab.id === draggedTabId ? ' tabItemDragging' : ''}${dropTarget?.tabId === tab.id ? (dropTarget.placeAfter ? ' tabItemDropAfter' : ' tabItemDropBefore') : ''}`}
+            draggable
+            onDragStart={() => handleTabDragStart(tab.id)}
+            onDragOver={(event) => handleTabDragOver(event, tab.id)}
+            onDrop={(event) => handleTabDrop(event, tab.id)}
+            onDragEnd={() => clearDragState()}
+          >
+            <button
+              type="button"
+              className={`tabButton${tab.id === activeTab.id ? ' tabButtonActive' : ''}`}
+              onClick={() => setActiveTabId(tab.id)}
                 onContextMenu={(event) => {
                   event.preventDefault();
                   renameTab(tab.id);
                 }}
-                title="Right-click to rename"
+                title="Drag to reorder, right-click to rename"
               >
                 {tab.title}
               </button>

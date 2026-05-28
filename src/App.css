@@ -79,6 +79,7 @@ button {
 }
 
 .tabItem {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -86,10 +87,34 @@ button {
   border: 1px solid transparent;
   border-radius: 4px;
   background-color: buttonface;
+  cursor: grab;
 }
 
 .tabItemActive {
   border-color: antiquewhite;
+}
+
+.tabItemDragging {
+  opacity: 0.6;
+}
+
+.tabItemDropBefore::before,
+.tabItemDropAfter::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  width: 3px;
+  border-radius: 999px;
+  background-color: antiquewhite;
+}
+
+.tabItemDropBefore::before {
+  left: -6px;
+}
+
+.tabItemDropAfter::after {
+  right: -6px;
 }
 
 .tabButton,
