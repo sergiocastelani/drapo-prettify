@@ -12,6 +12,42 @@ type WorkspaceTab = {
   prettyCode: string;
 };
 
+function getTabTitleBase(title: string): string
+{
+  return title.replace(/\s\(\d+\)$/, '');
+}
+
+function escapeRegex(value: string): string
+{
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function getTabTitleNumber(title: string, baseTitle: string): number | null
+{
+  if (title === baseTitle)
+    return 1;
+
+  const match = title.match(new RegExp(`^${escapeRegex(baseTitle)} \\((\\d+)\\)$`));
+  return match ? Number(match[1]) : null;
+}
+
+function createDuplicateTabTitle(tabs: WorkspaceTab[], title: string): string
+{
+  const baseTitle = getTabTitleBase(title);
+  const maxTabNumber = tabs.reduce((maxNumber, tab) => {
+    if (getTabTitleBase(tab.title) !== baseTitle)
+      return maxNumber;
+
+    const tabNumber = getTabTitleNumber(tab.title, baseTitle);
+    if (tabNumber === null)
+      return maxNumber;
+
+    return Math.max(maxNumber, tabNumber);
+  }, 0);
+
+  return `${baseTitle} (${maxTabNumber + 1})`;
+}
+
 function createWorkspaceTab(id: number): WorkspaceTab
 {
   return {
@@ -53,6 +89,19 @@ function App()
   function addTab()
   {
     const newTab = createWorkspaceTab(nextTabId);
+    setTabs((currentTabs) => [...currentTabs, newTab]);
+    setActiveTabId(newTab.id);
+    setNextTabId((currentId) => currentId + 1);
+  }
+
+  function duplicateTab()
+  {
+    const newTab = {
+      ...createWorkspaceTab(nextTabId),
+      title: createDuplicateTabTitle(tabs, activeTab.title),
+      originalCode: activeTab.originalCode,
+      prettyCode: activeTab.prettyCode,
+    };
     setTabs((currentTabs) => [...currentTabs, newTab]);
     setActiveTabId(newTab.id);
     setNextTabId((currentId) => currentId + 1);
@@ -151,9 +200,14 @@ function App()
             </div>
           ))}
         </div>
-        <button type="button" className="tabAddButton" onClick={() => addTab()}>
-          + New Tab
-        </button>
+        <div className="tabsActions">
+          <button type="button" className="tabAddButton" onClick={() => duplicateTab()}>
+            Duplicate
+          </button>
+          <button type="button" className="tabAddButton" onClick={() => addTab()}>
+            + New Tab
+          </button>
+        </div>
       </div>
 
       <div className="workspace">
