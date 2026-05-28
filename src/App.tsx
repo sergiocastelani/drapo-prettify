@@ -57,6 +57,22 @@ function App()
     setActiveTabId(newTab.id);
     setNextTabId((currentId) => currentId + 1);
   }
+
+  function renameTab(tabId: number)
+  {
+    const currentTab = tabs.find((tab) => tab.id === tabId);
+    if (!currentTab)
+      return;
+
+    const nextTitleInput = window.prompt('Rename tab', currentTab.title);
+    if (nextTitleInput === null)
+      return;
+
+    const nextTitle = nextTitleInput.trim() || `Tab ${tabId}`;
+    setTabs((currentTabs) =>
+      currentTabs.map((tab) => tab.id === tabId ? { ...tab, title: nextTitle } : tab)
+    );
+  }
   
   useEffect(() => {
     setTimeout(() => {
@@ -85,6 +101,11 @@ function App()
               type="button"
               className={`tabButton${tab.id === activeTab.id ? ' tabButtonActive' : ''}`}
               onClick={() => setActiveTabId(tab.id)}
+              onContextMenu={(event) => {
+                event.preventDefault();
+                renameTab(tab.id);
+              }}
+              title="Right-click to rename"
             >
               {tab.title}
             </button>
