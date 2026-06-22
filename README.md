@@ -9,6 +9,7 @@ A React-based web application for formatting and compressing Drapo code. This to
 - **Interactive Interface**: Real-time formatting with syntax highlighting
 - **Bidirectional Processing**: Seamlessly switch between prettified and compressed formats
 - **Syntax Highlighting**: Enhanced code readability with color-coded syntax
+- **Tabbed Workspaces**: Keep multiple formatting sessions open with isolated original and prettified code per tab
 
 ## What is Drapo?
 
@@ -44,11 +45,12 @@ Check https://github.com/spadrapo/drapo
 ## Usage
 
 ### Web Interface
-1. Enter your compact Drapo code in the "Original Drapo Code" input field
-2. Click "Prettify ⬇" to format the code with proper indentation and line breaks
-3. The formatted code will appear in the syntax-highlighted editor below
-4. Edit the prettified code in the editor if needed
-5. Click "Compress ⬆" to convert the prettified code back to compact form
+1. Use the tabs at the top to switch between independent workspaces or click `+ New Tab` to open another one
+2. Enter your compact Drapo code in the "Original Drapo Code" field for the active tab
+3. Click "Prettify ⬇" to format the code with proper indentation and line breaks
+4. The formatted code will appear in the syntax-highlighted editor below
+5. Edit the prettified code in the editor if needed
+6. Click "Compress ⬆" to convert the prettified code back to compact form inside the same tab
 
 ### Example
 

@@ -1,15 +1,24 @@
+html,
 body {
+  height: 100%;
   color: antiquewhite;
   background-color: #494949;
   margin: 0;
   padding: 0;
 }
 
+#root {
+  height: 100%;
+}
+
 #App {
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
+  height: 100vh;
   padding: 10px 50px;
   gap: 10px;
+  box-sizing: border-box;
 }
 
 h1 {
@@ -22,6 +31,7 @@ input {
   border-radius: 5px;
   border-width: 1px;
   font-family: 'Courier New', Courier, monospace;
+  box-sizing: border-box;
 }
 
 textarea {
@@ -40,12 +50,159 @@ button {
 
 .originalCode {
   padding: 10px;
+  width: 100%;
+}
+
+.originalCodeRow {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.originalCodeRow .originalCode {
+  flex: 1;
+  min-width: 0;
+}
+
+.originalCodeActions {
+  display: flex;
+  gap: 6px;
+}
+
+.iconButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  margin: 0;
+  padding: 0;
+}
+
+.iconButton svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .prettyCode {
   padding: 10px;
 }
 
+.tabsBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.tabsList {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 10px;
+  overflow-x: auto;
+}
+
+.tabsActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tabItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-right: 5px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background-color: buttonface;
+  cursor: grab;
+}
+
+.tabItemActive {
+  border-color: antiquewhite;
+}
+
+.tabItemDragging {
+  opacity: 0.6;
+}
+
+.tabItemDropBefore::before,
+.tabItemDropAfter::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  width: 3px;
+  border-radius: 999px;
+  background-color: antiquewhite;
+}
+
+.tabItemDropBefore::before {
+  left: -6px;
+}
+
+.tabItemDropAfter::after {
+  right: -6px;
+}
+
+.tabButton,
+.tabCloseButton,
+.tabAddButton {
+  margin: 0;
+  font-size: medium;
+  white-space: nowrap;
+}
+
+.tabButton,
+.tabCloseButton {
+  border: none;
+  background: transparent;
+}
+
+.tabButton {
+  padding: 5px 0 5px 5px;
+}
+
+.tabCloseButton {
+  padding: 5px;
+  line-height: 1;
+}
+
+.tabButtonActive {
+  font-weight: bold;
+}
+
+.workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  min-height: 0;
+}
+
 .buttonsRow {
   text-align: center;
+}
+
+.editorPanel {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.prettyCodeEditor {
+  width: 100%;
+  height: 100%;
+}
+
+.prettyCodeEditor textarea,
+.prettyCodeEditor pre {
+  min-height: 100% !important;
 }
